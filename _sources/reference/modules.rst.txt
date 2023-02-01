@@ -5,26 +5,30 @@ torchrl.modules package
 
 TensorDict modules
 ------------------
-
+.. currentmodule:: torchrl.modules.tensordict_module
 
 .. autosummary::
     :toctree: generated/
     :template: rl_template_noinherit.rst
 
-    TensorDictModule
-    ProbabilisticTensorDictModule
-    TensorDictSequential
-    TensorDictModuleWrapper
     Actor
-    ProbabilisticActor
-    ValueOperator
-    QValueActor
-    DistributionalQValueActor
-    ActorValueOperator
     ActorCriticOperator
     ActorCriticWrapper
-    is_tensordict_compatible
-    ensure_tensordict_compatible
+    ActorValueOperator
+    DistributionalQValueActor
+    ProbabilisticActor
+    QValueActor
+    ValueOperator
+    SafeModule
+    AdditiveGaussianWrapper
+    EGreedyWrapper
+    OrnsteinUhlenbeckProcessWrapper
+    SafeProbabilisticModule
+    SafeProbabilisticSequential
+    SafeSequential
+    WorldModelWrapper
+    common.is_tensordict_compatible
+    common.ensure_tensordict_compatible
 
 Hooks
 -----
@@ -84,6 +88,7 @@ Planners
 
     CEMPlanner
     MPCPlannerBase
+    MPPIPlanner
 
 
 Distributions
@@ -93,6 +98,8 @@ Distributions
     :template: rl_template_noinherit.rst
 
     Delta
+    IndependentNormal
+    NormalParamWrapper
     TanhNormal
     TruncatedNormal
     TanhDelta
@@ -101,6 +108,8 @@ Distributions
 Utils
 -----
 
+.. currentmodule:: torchrl.modules.utils
+
 .. autosummary::
     :toctree: generated/
     :template: rl_template_noinherit.rst
@@ -108,5 +117,8 @@ Utils
     mappings
     inv_softplus
     biased_softplus
+
+.. currentmodule:: torchrl.modules.models.utils
+
     SqueezeLayer
     Squeeze2dLayer

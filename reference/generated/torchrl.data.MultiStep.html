@@ -34,11 +34,22 @@
   <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="torchrl.envs package" href="../envs.html" />
-    <link rel="prev" title="expand_right" href="torchrl.data.utils.expand_right.html" />
+    <link rel="prev" title="UnboundedDiscreteTensorSpec" href="torchrl.data.UnboundedDiscreteTensorSpec.html" />
   <!-- Google Analytics -->
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117752657-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117752657-2');
+    </script>
   
   <!-- End Google Analytics -->
   
@@ -213,7 +224,17 @@
         <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           <div class="pytorch-left-menu-search">
             
-    
+
+            
+              
+              
+                <div class="version">
+                  main (None )
+                </div>
+              
+            
+
+            
 
 
   
@@ -227,6 +248,7 @@
   </form>
 </div>
 
+            
           </div>
 
           
@@ -235,9 +257,20 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/torchrl_demo.html">Introduction to TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tensordict_tutorial.html">TensorDict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tensordict_module.html">TensorDictModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/torch_envs.html">TorchRL envs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/multi_task.html">Task-specific policy in multi-task environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a></li>
+</ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../knowledge_base.html">Knowledge Base</a></li>
 </ul>
 
@@ -309,6 +342,27 @@
         <div class="pytorch-content-left">
 
         
+          <div class="pytorch-call-to-action-links">
+            <div id="tutorial-type">reference/generated/torchrl.data.MultiStep</div>
+
+            <div id="google-colab-link">
+              <img class="call-to-action-img" src="../../_static/images/pytorch-colab.svg"/>
+              <div class="call-to-action-desktop-view">Run in Google Colab</div>
+              <div class="call-to-action-mobile-view">Colab</div>
+            </div>
+            <div id="download-notebook-link">
+              <img class="call-to-action-notebook-img" src="../../_static/images/pytorch-download.svg"/>
+              <div class="call-to-action-desktop-view">Download Notebook</div>
+              <div class="call-to-action-mobile-view">Notebook</div>
+            </div>
+            <div id="github-view-link">
+              <img class="call-to-action-img" src="../../_static/images/pytorch-github.svg"/>
+              <div class="call-to-action-desktop-view">View on GitHub</div>
+              <div class="call-to-action-mobile-view">GitHub</div>
+            </div>
+          </div>
+
+        
           
           <div class="rst-content">
           
@@ -319,7 +373,7 @@
 <h1>MultiStep<a class="headerlink" href="#multistep" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torchrl.data.</span></span><span class="sig-name descname"><span class="pre">MultiStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torchrl.data.MultiStep" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torchrl.data.</span></span><span class="sig-name descname"><span class="pre">MultiStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_steps_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/torchrl/data/postprocs/postprocs.html#MultiStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchrl.data.MultiStep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multistep reward transform.</p>
 <p>Presented in ‘Sutton, R. S. 1988. Learning to
 predict by the methods of temporal differences. Machine learning 3(
@@ -554,16 +608,16 @@ strings are acceptable.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensordict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TensorDictBase</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TensorDictBase</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.forward" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensordict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TensorDictBase</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TensorDictBase</span></span></span><a class="reference internal" href="../../_modules/torchrl/data/postprocs/postprocs.html#MultiStep.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchrl.data.MultiStep.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-writes a tensordict following the multi-step transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>tensordict</strong> – <p>TennsorDict instance with Batch x Time-steps x …
 dimensions.
 The TensorDict must contain a “reward” and “done” key. All
-keys that start with the “<a href="#id1"><span class="problematic" id="id2">next_</span></a>” prefix will be shifted by (
-at most) self.n_steps_max frames. The TensorDict will also
-be updated with new key-value pairs:</p>
+keys that are contained within the “next” nested tensordict
+will be shifted by (at most) <code class="xref py py-obj docutils literal notranslate"><span class="pre">MultiStep.n_steps_max</span></code> frames.
+The TensorDict will also be updated with new key-value pairs:</p>
 <ul class="simple">
 <li><p>gamma: indicating the discount to be used for the next</p></li>
 </ul>
@@ -623,7 +677,7 @@ fully-qualified string.)</p>
 Implement this and a corresponding <a class="reference internal" href="#torchrl.data.MultiStep.set_extra_state" title="torchrl.data.MultiStep.set_extra_state"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_extra_state()</span></code></a> for your module
 if you need to store extra state. This function is called when building the
 module’s <cite>state_dict()</cite>.</p>
-<p>Note that extra state should be picklable to ensure working serialization
+<p>Note that extra state should be pickleable to ensure working serialization
 of the state_dict. We only provide provide backwards compatibility guarantees
 for serializing Tensors; other objects may break backwards compatibility if
 their serialized pickled form changes.</p>
@@ -825,17 +879,16 @@ example, <code class="docutils literal notranslate"><span class="pre">l</span></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.named_buffers">
-<span class="sig-name descname"><span class="pre">named_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_duplicate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.11)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.named_buffers" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">named_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.11)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.named_buffers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an iterator over module buffers, yielding both the
 name of the buffer as well as the buffer itself.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – prefix to prepend to all buffer names.</p></li>
-<li><p><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – if True, then yields buffers of this module
+<li><p><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if True, then yields buffers of this module
 and all submodules. Otherwise, yields only buffers that
-are direct members of this module. Defaults to True.</p></li>
-<li><p><strong>remove_duplicate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to remove the duplicated buffers in the result. Defaults to True.</p></li>
+are direct members of this module.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
@@ -910,7 +963,7 @@ example, <code class="docutils literal notranslate"><span class="pre">l</span></
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.named_parameters">
-<span class="sig-name descname"><span class="pre">named_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_duplicate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.11)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parameter.Parameter.html#torch.nn.parameter.Parameter" title="(in PyTorch v1.13)"><span class="pre">Parameter</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.named_parameters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">named_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.11)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parameter.Parameter.html#torch.nn.parameter.Parameter" title="(in PyTorch v1.13)"><span class="pre">Parameter</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.named_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an iterator over module parameters, yielding both the
 name of the parameter as well as the parameter itself.</p>
 <dl class="field-list simple">
@@ -920,8 +973,6 @@ name of the parameter as well as the parameter itself.</p>
 <li><p><strong>recurse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if True, then yields parameters of this module
 and all submodules. Otherwise, yields only parameters that
 are direct members of this module.</p></li>
-<li><p><strong>remove_duplicate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to remove the duplicated
-parameters in the result. Defaults to True.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields<span class="colon">:</span></dt>
@@ -964,7 +1015,7 @@ are direct members of this module.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.register_backward_hook">
-<span class="sig-name descname"><span class="pre">register_backward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><span class="pre">Module</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_backward_hook" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register_backward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><span class="pre">Module</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_backward_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a backward hook on the module.</p>
 <p>This function is deprecated in favor of <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook" title="(in PyTorch v1.13)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register_full_backward_hook()</span></code></a> and
 the behavior of this function will change in future versions.</p>
@@ -1014,7 +1065,7 @@ the buffer is <strong>not</strong> included in the module’s <a class="referenc
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.register_forward_hook">
-<span class="sig-name descname"><span class="pre">register_forward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_forward_hook" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register_forward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_forward_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a forward hook on the module.</p>
 <p>The hook will be called every time after <a class="reference internal" href="#torchrl.data.MultiStep.forward" title="torchrl.data.MultiStep.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> has computed an output.
 It should have the following signature:</p>
@@ -1027,32 +1078,19 @@ The hook can modify the output. It can modify the input inplace but
 it will not have effect on forward since this is called after
 <a class="reference internal" href="#torchrl.data.MultiStep.forward" title="torchrl.data.MultiStep.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> is called.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hook</strong> (<em>Callable</em>) – The user defined hook to be registered.</p></li>
-<li><p><strong>prepend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If true, the provided <code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired before
-all existing <code class="docutils literal notranslate"><span class="pre">forward</span></code> hooks on this
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Otherwise, the provided
-<code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired after all existing <code class="docutils literal notranslate"><span class="pre">forward</span></code> hooks on
-this <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Note that global
-<code class="docutils literal notranslate"><span class="pre">forward</span></code> hooks registered with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">register_module_forward_hook()</span></code> will fire before all hooks
-registered by this method.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a handle that can be used to remove the added hook by calling
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a handle that can be used to remove the added hook by calling
 <code class="docutils literal notranslate"><span class="pre">handle.remove()</span></code></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.register_forward_pre_hook">
-<span class="sig-name descname"><span class="pre">register_forward_pre_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_forward_pre_hook" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register_forward_pre_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_forward_pre_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a forward pre-hook on the module.</p>
 <p>The hook will be called every time before <a class="reference internal" href="#torchrl.data.MultiStep.forward" title="torchrl.data.MultiStep.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a> is invoked.
 It should have the following signature:</p>
@@ -1065,35 +1103,24 @@ The hook can modify the input. User can either return a tuple or a
 single modified value in the hook. We will wrap the value into a tuple
 if a single value is returned(unless that value is already a tuple).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hook</strong> (<em>Callable</em>) – The user defined hook to be registered.</p></li>
-<li><p><strong>prepend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If true, the provided <code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired before
-all existing <code class="docutils literal notranslate"><span class="pre">forward_pre</span></code> hooks on this
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Otherwise, the provided
-<code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired after all existing <code class="docutils literal notranslate"><span class="pre">forward_pre</span></code> hooks
-on this <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Note that global
-<code class="docutils literal notranslate"><span class="pre">forward_pre</span></code> hooks registered with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">register_module_forward_pre_hook()</span></code> will fire before all
-hooks registered by this method.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a handle that can be used to remove the added hook by calling
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a handle that can be used to remove the added hook by calling
 <code class="docutils literal notranslate"><span class="pre">handle.remove()</span></code></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="torchrl.data.MultiStep.register_full_backward_hook">
-<span class="sig-name descname"><span class="pre">register_full_backward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><span class="pre">Module</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_full_backward_hook" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register_full_backward_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><span class="pre">Module</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_full_backward_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a backward hook on the module.</p>
-<p>The hook will be called every time the gradients with respect to module
-inputs are computed. The hook should have the following signature:</p>
+<p>The hook will be called every time the gradients with respect to a module
+are computed, i.e. the hook will execute if and only if the gradients with
+respect to module outputs are computed. The hook should have the following
+signature:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hook</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">grad_input</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
 </pre></div>
 </div>
@@ -1114,71 +1141,12 @@ of each Tensor returned by the Module’s forward function.</p>
 will raise an error.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hook</strong> (<em>Callable</em>) – The user-defined hook to be registered.</p></li>
-<li><p><strong>prepend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If true, the provided <code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired before
-all existing <code class="docutils literal notranslate"><span class="pre">backward</span></code> hooks on this
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Otherwise, the provided
-<code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired after all existing <code class="docutils literal notranslate"><span class="pre">backward</span></code> hooks on
-this <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Note that global
-<code class="docutils literal notranslate"><span class="pre">backward</span></code> hooks registered with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">register_module_full_backward_hook()</span></code> will fire before
-all hooks registered by this method.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a handle that can be used to remove the added hook by calling
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a handle that can be used to remove the added hook by calling
 <code class="docutils literal notranslate"><span class="pre">handle.remove()</span></code></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="torchrl.data.MultiStep.register_full_backward_pre_hook">
-<span class="sig-name descname"><span class="pre">register_full_backward_pre_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" title="(in PyTorch v1.13)"><span class="pre">Module</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">RemovableHandle</span></span></span><a class="headerlink" href="#torchrl.data.MultiStep.register_full_backward_pre_hook" title="Permalink to this definition">¶</a></dt>
-<dd><p>Registers a backward pre-hook on the module.</p>
-<p>The hook will be called every time the gradients for the module are computed.
-The hook should have the following signature:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hook</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span> <span class="ow">or</span> <span class="kc">None</span>
-</pre></div>
-</div>
-<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">grad_output</span></code> is a tuple. The hook should
-not modify its arguments, but it can optionally return a new gradient with
-respect to the output that will be used in place of <code class="xref py py-attr docutils literal notranslate"><span class="pre">grad_output</span></code> in
-subsequent computations. Entries in <code class="xref py py-attr docutils literal notranslate"><span class="pre">grad_output</span></code> will be <code class="docutils literal notranslate"><span class="pre">None</span></code> for
-all non-Tensor arguments.</p>
-<p>For technical reasons, when this hook is applied to a Module, its forward function will
-receive a view of each Tensor passed to the Module. Similarly the caller will receive a view
-of each Tensor returned by the Module’s forward function.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Modifying inputs inplace is not allowed when using backward hooks and
-will raise an error.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hook</strong> (<em>Callable</em>) – The user-defined hook to be registered.</p></li>
-<li><p><strong>prepend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If true, the provided <code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired before
-all existing <code class="docutils literal notranslate"><span class="pre">backward_pre</span></code> hooks on this
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Otherwise, the provided
-<code class="docutils literal notranslate"><span class="pre">hook</span></code> will be fired after all existing <code class="docutils literal notranslate"><span class="pre">backward_pre</span></code> hooks
-on this <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.Module</span></code>. Note that global
-<code class="docutils literal notranslate"><span class="pre">backward_pre</span></code> hooks registered with
-<code class="xref py py-func docutils literal notranslate"><span class="pre">register_module_full_backward_pre_hook()</span></code> will fire before
-all hooks registered by this method.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a handle that can be used to remove the added hook by calling
-<code class="docutils literal notranslate"><span class="pre">handle.remove()</span></code></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.hooks.RemovableHandle</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1202,7 +1170,7 @@ is a <code class="docutils literal notranslate"><span class="pre">list</span></c
 <code class="docutils literal notranslate"><span class="pre">strict=True</span></code> are affected by modifications the hook makes to
 <code class="docutils literal notranslate"><span class="pre">missing_keys</span></code> or <code class="docutils literal notranslate"><span class="pre">unexpected_keys</span></code>, as expected. Additions to either
 set of keys will result in an error being thrown when <code class="docutils literal notranslate"><span class="pre">strict=True</span></code>, and
-clearing out both missing and unexpected keys will avoid an error.</p>
+clearning out both missing and unexpected keys will avoid an error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a handle that can be used to remove the added hook by calling
@@ -1553,7 +1521,7 @@ See <a class="reference external" href="https://pytorch.org/docs/stable/generate
         <a href="../envs.html" class="btn btn-neutral float-right" title="torchrl.envs package" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="torchrl.data.utils.expand_right.html" class="btn btn-neutral" title="expand_right" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="torchrl.data.UnboundedDiscreteTensorSpec.html" class="btn btn-neutral" title="UnboundedDiscreteTensorSpec" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -1617,7 +1585,6 @@ See <a class="reference external" href="https://pytorch.org/docs/stable/generate
 <li><a class="reference internal" href="#torchrl.data.MultiStep.register_forward_hook"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_forward_hook()</span></code></a></li>
 <li><a class="reference internal" href="#torchrl.data.MultiStep.register_forward_pre_hook"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_forward_pre_hook()</span></code></a></li>
 <li><a class="reference internal" href="#torchrl.data.MultiStep.register_full_backward_hook"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_full_backward_hook()</span></code></a></li>
-<li><a class="reference internal" href="#torchrl.data.MultiStep.register_full_backward_pre_hook"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_full_backward_pre_hook()</span></code></a></li>
 <li><a class="reference internal" href="#torchrl.data.MultiStep.register_load_state_dict_post_hook"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_load_state_dict_post_hook()</span></code></a></li>
 <li><a class="reference internal" href="#torchrl.data.MultiStep.register_module"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_module()</span></code></a></li>
 <li><a class="reference internal" href="#torchrl.data.MultiStep.register_parameter"><code class="docutils literal notranslate"><span class="pre">MultiStep.register_parameter()</span></code></a></li>
@@ -1733,7 +1700,7 @@ See <a class="reference external" href="https://pytorch.org/docs/stable/generate
             <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
             <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
             <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
-          </ul>  
+          </ul>
           </div>
 
         <div class="footer-links-col">
@@ -1746,7 +1713,7 @@ See <a class="reference external" href="https://pytorch.org/docs/stable/generate
           </ul>
          </div>
         </div>
-        
+
         <div class="privacy-policy">
           <ul>
             <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
@@ -1796,7 +1763,7 @@ See <a class="reference external" href="https://pytorch.org/docs/stable/generate
           <li>
             <a href="https://pytorch.org/ecosystem">Ecosystem</a>
           </li>
-            
+
           <li>
             <a href="https://pytorch.org/mobile">Mobile</a>
           </li>
@@ -1858,7 +1825,7 @@ See <a class="reference external" href="https://pytorch.org/docs/stable/generate
           <li class="resources-mobile-menu-title">
             Resources
           </li>
-            
+
            <ul class="resources-mobile-menu-items">
 
             <li>

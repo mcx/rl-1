@@ -1,9 +1,0 @@
-﻿.. currentmodule:: torchrl.data
-
-
-LazyStackedTensorDict
-=====================
-
-.. autoclass:: LazyStackedTensorDict
-    :members:
-    :inherited-members:

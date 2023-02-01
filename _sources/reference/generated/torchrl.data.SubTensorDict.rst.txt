@@ -1,9 +1,0 @@
-﻿.. currentmodule:: torchrl.data
-
-
-SubTensorDict
-=============
-
-.. autoclass:: SubTensorDict
-    :members:
-    :inherited-members:

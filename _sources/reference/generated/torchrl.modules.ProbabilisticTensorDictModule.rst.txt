@@ -1,8 +1,0 @@
-﻿.. currentmodule:: torchrl.modules
-
-
-ProbabilisticTensorDictModule
-=============================
-
-.. autoclass:: ProbabilisticTensorDictModule
-    :members:

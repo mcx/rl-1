@@ -34,11 +34,22 @@
   <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="About MuJoCo" href="MUJOCO_INSTALLATION.html" />
     <link rel="prev" title="Working with gym" href="GYM.html" />
   <!-- Google Analytics -->
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117752657-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117752657-2');
+    </script>
   
   <!-- End Google Analytics -->
   
@@ -213,7 +224,17 @@
         <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           <div class="pytorch-left-menu-search">
             
-    
+
+            
+              
+              
+                <div class="version">
+                  main (None )
+                </div>
+              
+            
+
+            
 
 
   
@@ -227,6 +248,7 @@
   </form>
 </div>
 
+            
           </div>
 
           
@@ -235,9 +257,20 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/torchrl_demo.html">Introduction to TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tensordict_tutorial.html">TensorDict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tensordict_module.html">TensorDictModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/torch_envs.html">TorchRL envs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/multi_task.html">Task-specific policy in multi-task environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../knowledge_base.html">Knowledge Base</a></li>
 </ul>
 
@@ -307,6 +340,27 @@
         <div class="pytorch-content-left">
 
         
+          <div class="pytorch-call-to-action-links">
+            <div id="tutorial-type">reference/generated/knowledge_base/HABITAT</div>
+
+            <div id="google-colab-link">
+              <img class="call-to-action-img" src="../../../_static/images/pytorch-colab.svg"/>
+              <div class="call-to-action-desktop-view">Run in Google Colab</div>
+              <div class="call-to-action-mobile-view">Colab</div>
+            </div>
+            <div id="download-notebook-link">
+              <img class="call-to-action-notebook-img" src="../../../_static/images/pytorch-download.svg"/>
+              <div class="call-to-action-desktop-view">Download Notebook</div>
+              <div class="call-to-action-mobile-view">Notebook</div>
+            </div>
+            <div id="github-view-link">
+              <img class="call-to-action-img" src="../../../_static/images/pytorch-github.svg"/>
+              <div class="call-to-action-desktop-view">View on GitHub</div>
+              <div class="call-to-action-mobile-view">GitHub</div>
+            </div>
+          </div>
+
+        
           
           <div class="rst-content">
           
@@ -323,18 +377,18 @@
 <ol class="arabic">
 <li><p><strong>Preparing conda env</strong></p>
 <p>Assuming you have <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">conda</a> installed, let’s prepare a conda env:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n habitat <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7 <span class="nv">cmake</span><span class="o">=</span><span class="m">3</span>.14.0
-conda activate habitat
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>habitat<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7<span class="w"> </span><span class="nv">cmake</span><span class="o">=</span><span class="m">3</span>.14.0
+conda<span class="w"> </span>activate<span class="w"> </span>habitat
 </pre></div>
 </div>
 </li>
 <li><p><strong>conda install habitat-sim</strong>
 To install habitat-sim with bullet physics and in headless mode (usually necessary to run habitat on a cluster)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install habitat-sim withbullet headless -c conda-forge -c aihabitat-nightly -y
-pip install git+https://github.com/facebookresearch/habitat-lab.git#subdirectory<span class="o">=</span>habitat-lab
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>habitat-sim<span class="w"> </span>withbullet<span class="w"> </span>headless<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>-c<span class="w"> </span>aihabitat-nightly<span class="w"> </span>-y
+pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/facebookresearch/habitat-lab.git#subdirectory<span class="o">=</span>habitat-lab
 
 <span class="c1"># This is to reduce verbosity</span>
-<span class="nb">export</span> <span class="nv">MAGNUM_LOG</span><span class="o">=</span>quiet <span class="o">&amp;&amp;</span> <span class="nb">export</span> <span class="nv">HABITAT_SIM_LOG</span><span class="o">=</span>quiet
+<span class="nb">export</span><span class="w"> </span><span class="nv">MAGNUM_LOG</span><span class="o">=</span>quiet<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">HABITAT_SIM_LOG</span><span class="o">=</span>quiet
 </pre></div>
 </div>
 <p>If you don’t want to install it in headless mode, simply remove the <code class="docutils literal notranslate"><span class="pre">headless</span></code> package from the <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span></code> command.</p>
@@ -359,12 +413,23 @@ pip install git+https://github.com/facebookresearch/habitat-lab.git#subdirectory
 <section id="common-issues">
 <h2>Common issues<a class="headerlink" href="#common-issues" title="Permalink to this heading">¶</a></h2>
 <ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">OSError:</span> <span class="pre">Could</span> <span class="pre">not</span> <span class="pre">find/load</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file:</span> <span class="pre">libllvmlite.so</span></code>
+<strong>Solution</strong>: IOnstall the missing library and add a pointer to the file
+(check that the python version matches before executing the command and replace the path and env_name with yours):</p></li>
+</ol>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>llvmlite
+conda<span class="w"> </span>env<span class="w"> </span>config<span class="w"> </span>vars<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nv">LD_PRELOAD</span><span class="o">=</span><span class="nv">$LD_PRELOAD</span>:/path/to/conda/envs/env_name/lib/python3.8/site-packages/llvmlite/binding/libllvmlite.so
+conda<span class="w"> </span>deactivate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>env_name
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
 <li><p><code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">/usr/lib/x86_64-linux-gnu/libOpenGL.so.0:</span> <span class="pre">undefined</span> <span class="pre">symbol:</span> <span class="pre">_glapi_tls_Current</span></code>
 <strong>Solution</strong>: as in <span class="xref myst">MUJOCO</span> debug, Link conda to the right libOpenGL.so file (replace /path/to/conda and mujoco_env with the proper paths and names):</p></li>
 </ol>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda install -y -c conda-forge libglvnd-glx-cos7-x86_64 --force-reinstall
-conda install -y -c conda-forge xvfbwrapper --force-reinstall
-conda env config vars <span class="nb">set</span> <span class="nv">LD_PRELOAD</span><span class="o">=</span>/path/to/conda/envs/mujoco_env/x86_64-conda-linux-gnu/sysroot/usr/lib64/libGLdispatch.so.0
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>libglvnd-glx-cos7-x86_64<span class="w"> </span>--force-reinstall
+conda<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>xvfbwrapper<span class="w"> </span>--force-reinstall
+conda<span class="w"> </span>env<span class="w"> </span>config<span class="w"> </span>vars<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nv">LD_PRELOAD</span><span class="o">=</span><span class="nv">$LD_PRELOAD</span>:/path/to/conda/envs/env_name/x86_64-conda-linux-gnu/sysroot/usr/lib64/libGLdispatch.so.0
+conda<span class="w"> </span>deactivate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>env_name
 </pre></div>
 </div>
 </section>
@@ -521,7 +586,7 @@ conda env config vars <span class="nb">set</span> <span class="nv">LD_PRELOAD</s
             <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
             <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
             <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
-          </ul>  
+          </ul>
           </div>
 
         <div class="footer-links-col">
@@ -534,7 +599,7 @@ conda env config vars <span class="nb">set</span> <span class="nv">LD_PRELOAD</s
           </ul>
          </div>
         </div>
-        
+
         <div class="privacy-policy">
           <ul>
             <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
@@ -584,7 +649,7 @@ conda env config vars <span class="nb">set</span> <span class="nv">LD_PRELOAD</s
           <li>
             <a href="https://pytorch.org/ecosystem">Ecosystem</a>
           </li>
-            
+
           <li>
             <a href="https://pytorch.org/mobile">Mobile</a>
           </li>
@@ -646,7 +711,7 @@ conda env config vars <span class="nb">set</span> <span class="nv">LD_PRELOAD</s
           <li class="resources-mobile-menu-title">
             Resources
           </li>
-            
+
            <ul class="resources-mobile-menu-items">
 
             <li>

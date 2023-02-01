@@ -34,11 +34,22 @@
   <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="sync_sync_collector" href="torchrl.trainers.helpers.sync_sync_collector.html" />
-    <link rel="prev" title="ClearCudaCache" href="torchrl.trainers.ClearCudaCache.html" />
+    <link rel="next" title="parallel_env_constructor" href="torchrl.trainers.helpers.parallel_env_constructor.html" />
+    <link rel="prev" title="make_target_updater" href="torchrl.trainers.helpers.make_target_updater.html" />
   <!-- Google Analytics -->
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117752657-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117752657-2');
+    </script>
   
   <!-- End Google Analytics -->
   
@@ -213,7 +224,17 @@
         <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           <div class="pytorch-left-menu-search">
             
-    
+
+            
+              
+              
+                <div class="version">
+                  main (None )
+                </div>
+              
+            
+
+            
 
 
   
@@ -227,6 +248,7 @@
   </form>
 </div>
 
+            
           </div>
 
           
@@ -235,9 +257,20 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/torchrl_demo.html">Introduction to TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tensordict_tutorial.html">TensorDict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tensordict_module.html">TensorDictModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/torch_envs.html">TorchRL envs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/multi_task.html">Task-specific policy in multi-task environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a></li>
+</ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../knowledge_base.html">Knowledge Base</a></li>
 </ul>
 
@@ -309,6 +342,27 @@
         <div class="pytorch-content-left">
 
         
+          <div class="pytorch-call-to-action-links">
+            <div id="tutorial-type">reference/generated/torchrl.trainers.helpers.make_trainer</div>
+
+            <div id="google-colab-link">
+              <img class="call-to-action-img" src="../../_static/images/pytorch-colab.svg"/>
+              <div class="call-to-action-desktop-view">Run in Google Colab</div>
+              <div class="call-to-action-mobile-view">Colab</div>
+            </div>
+            <div id="download-notebook-link">
+              <img class="call-to-action-notebook-img" src="../../_static/images/pytorch-download.svg"/>
+              <div class="call-to-action-desktop-view">Download Notebook</div>
+              <div class="call-to-action-mobile-view">Notebook</div>
+            </div>
+            <div id="github-view-link">
+              <img class="call-to-action-img" src="../../_static/images/pytorch-github.svg"/>
+              <div class="call-to-action-desktop-view">View on GitHub</div>
+              <div class="call-to-action-mobile-view">GitHub</div>
+            </div>
+          </div>
+
+        
           
           <div class="rst-content">
           
@@ -319,7 +373,7 @@
 <h1>make_trainer<a class="headerlink" href="#make-trainer" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torchrl.trainers.helpers.make_trainer">
-<span class="sig-prename descclassname"><span class="pre">torchrl.trainers.helpers.</span></span><span class="sig-name descname"><span class="pre">make_trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_DataCollector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LossModule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="torchrl.envs.EnvBase.html#torchrl.envs.EnvBase" title="torchrl.envs.common.EnvBase"><span class="pre">EnvBase</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_net_updater</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TargetNetUpdater</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_exploration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="torchrl.modules.TensorDictModuleWrapper.html#torchrl.modules.TensorDictModuleWrapper" title="torchrl.modules.tensordict_module.common.TensorDictModuleWrapper"><span class="pre">TensorDictModuleWrapper</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="torchrl.modules.TensorDictModule.html#torchrl.modules.TensorDictModule" title="torchrl.modules.tensordict_module.common.TensorDictModule"><span class="pre">TensorDictModule</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="torchrl.trainers.ReplayBuffer.html#torchrl.trainers.ReplayBuffer" title="torchrl.data.replay_buffers.replay_buffers.ReplayBuffer"><span class="pre">ReplayBuffer</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Logger</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="torchrl.trainers.Trainer.html#torchrl.trainers.Trainer" title="torchrl.trainers.trainers.Trainer"><span class="pre">Trainer</span></a></span></span><a class="headerlink" href="#torchrl.trainers.helpers.make_trainer" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">torchrl.trainers.helpers.</span></span><span class="sig-name descname"><span class="pre">make_trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_DataCollector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LossModule</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="torchrl.envs.EnvBase.html#torchrl.envs.EnvBase" title="torchrl.envs.common.EnvBase"><span class="pre">EnvBase</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_net_updater</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TargetNetUpdater</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_exploration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TensorDictModuleWrapper</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="torchrl.modules.tensordict_module.SafeModule.html#torchrl.modules.tensordict_module.SafeModule" title="torchrl.modules.tensordict_module.common.SafeModule"><span class="pre">SafeModule</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="torchrl.data.ReplayBuffer.html#torchrl.data.ReplayBuffer" title="torchrl.data.replay_buffers.replay_buffers.ReplayBuffer"><span class="pre">ReplayBuffer</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Logger</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="torchrl.trainers.Trainer.html#torchrl.trainers.Trainer" title="torchrl.trainers.trainers.Trainer"><span class="pre">Trainer</span></a></span></span><a class="reference internal" href="../../_modules/torchrl/trainers/helpers/trainers.html#make_trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchrl.trainers.helpers.make_trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a Trainer instance given its constituents.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -329,7 +383,7 @@
 <li><p><strong>recorder</strong> (<a class="reference internal" href="torchrl.envs.EnvBase.html#torchrl.envs.EnvBase" title="torchrl.envs.EnvBase"><em>EnvBase</em></a><em>, </em><em>optional</em>) – a recorder environment. If None, the trainer will train the policy without
 testing it.</p></li>
 <li><p><strong>target_net_updater</strong> (<em>TargetNetUpdater</em><em>, </em><em>optional</em>) – A target network update object.</p></li>
-<li><p><strong>policy_exploration</strong> (<em>TDModule</em><em> or </em><a class="reference internal" href="torchrl.modules.TensorDictModuleWrapper.html#torchrl.modules.TensorDictModuleWrapper" title="torchrl.modules.TensorDictModuleWrapper"><em>TensorDictModuleWrapper</em></a><em>, </em><em>optional</em>) – a policy to be used for recording and exploration
+<li><p><strong>policy_exploration</strong> (<em>TDModule</em><em> or </em><em>TensorDictModuleWrapper</em><em>, </em><em>optional</em>) – a policy to be used for recording and exploration
 updates (should be synced with the learnt policy).</p></li>
 <li><p><strong>replay_buffer</strong> (<a class="reference internal" href="torchrl.data.ReplayBuffer.html#torchrl.data.ReplayBuffer" title="torchrl.data.ReplayBuffer"><em>ReplayBuffer</em></a><em>, </em><em>optional</em>) – a replay buffer to be used to collect data.</p></li>
 <li><p><strong>logger</strong> (<em>Logger</em><em>, </em><em>optional</em>) – a Logger to be used for logging.</p></li>
@@ -350,7 +404,7 @@ arguments are used.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.collectors.collectors</span> <span class="kn">import</span> <span class="n">SyncDataCollector</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.data</span> <span class="kn">import</span> <span class="n">TensorDictReplayBuffer</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.envs.libs.gym</span> <span class="kn">import</span> <span class="n">GymEnv</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.modules</span> <span class="kn">import</span> <span class="n">TensorDictModuleWrapper</span><span class="p">,</span> <span class="n">TensorDictModule</span><span class="p">,</span> <span class="n">ValueOperator</span><span class="p">,</span> <span class="n">EGreedyWrapper</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.modules</span> <span class="kn">import</span> <span class="n">TensorDictModuleWrapper</span><span class="p">,</span> <span class="n">SafeModule</span><span class="p">,</span> <span class="n">ValueOperator</span><span class="p">,</span> <span class="n">EGreedyWrapper</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.objectives.common</span> <span class="kn">import</span> <span class="n">LossModule</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.objectives.utils</span> <span class="kn">import</span> <span class="n">TargetNetUpdater</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torchrl.objectives</span> <span class="kn">import</span> <span class="n">DDPGLoss</span>
@@ -360,14 +414,14 @@ arguments are used.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">action_spec</span> <span class="o">=</span> <span class="n">env_proof</span><span class="o">.</span><span class="n">action_spec</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">env_proof</span><span class="o">.</span><span class="n">observation_spec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">net_value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">env_proof</span><span class="o">.</span><span class="n">observation_spec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># for the purpose of testing</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">policy</span> <span class="o">=</span> <span class="n">TensorDictModule</span><span class="p">(</span><span class="n">action_spec</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">policy</span> <span class="o">=</span> <span class="n">SafeModule</span><span class="p">(</span><span class="n">action_spec</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">value</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span><span class="n">net_value</span><span class="p">,</span> <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state_action_value&quot;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">collector</span> <span class="o">=</span> <span class="n">SyncDataCollector</span><span class="p">(</span><span class="n">env_maker</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">total_frames</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">loss_module</span> <span class="o">=</span> <span class="n">DDPGLoss</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">recorder</span> <span class="o">=</span> <span class="n">env_proof</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">target_net_updater</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">policy_exploration</span> <span class="o">=</span> <span class="n">EGreedyWrapper</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">TensorDictReplayBuffer</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">TensorDictReplayBuffer</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">logger</span> <span class="o">=</span> <span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">exp_name</span><span class="o">=</span><span class="nb">dir</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">trainer</span> <span class="o">=</span> <span class="n">make_trainer</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">loss_module</span><span class="p">,</span> <span class="n">recorder</span><span class="p">,</span> <span class="n">target_net_updater</span><span class="p">,</span> <span class="n">policy_exploration</span><span class="p">,</span>
@@ -387,10 +441,10 @@ arguments are used.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="torchrl.trainers.helpers.sync_sync_collector.html" class="btn btn-neutral float-right" title="sync_sync_collector" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="torchrl.trainers.helpers.parallel_env_constructor.html" class="btn btn-neutral float-right" title="parallel_env_constructor" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="torchrl.trainers.ClearCudaCache.html" class="btn btn-neutral" title="ClearCudaCache" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="torchrl.trainers.helpers.make_target_updater.html" class="btn btn-neutral" title="make_target_updater" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -524,7 +578,7 @@ arguments are used.</p></li>
             <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
             <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
             <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
-          </ul>  
+          </ul>
           </div>
 
         <div class="footer-links-col">
@@ -537,7 +591,7 @@ arguments are used.</p></li>
           </ul>
          </div>
         </div>
-        
+
         <div class="privacy-policy">
           <ul>
             <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
@@ -587,7 +641,7 @@ arguments are used.</p></li>
           <li>
             <a href="https://pytorch.org/ecosystem">Ecosystem</a>
           </li>
-            
+
           <li>
             <a href="https://pytorch.org/mobile">Mobile</a>
           </li>
@@ -649,7 +703,7 @@ arguments are used.</p></li>
           <li class="resources-mobile-menu-title">
             Resources
           </li>
-            
+
            <ul class="resources-mobile-menu-items">
 
             <li>

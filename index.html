@@ -34,10 +34,21 @@
   <link rel="stylesheet" href="_static/sg_gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="_static/sg_gallery-dataframe.css" type="text/css" />
   <link rel="stylesheet" href="_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API Reference" href="reference/index.html" />
+    <link rel="next" title="Introduction to TorchRL" href="tutorials/torchrl_demo.html" />
   <!-- Google Analytics -->
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117752657-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117752657-2');
+    </script>
   
   <!-- End Google Analytics -->
   
@@ -212,7 +223,17 @@
         <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           <div class="pytorch-left-menu-search">
             
-    
+
+            
+              
+              
+                <div class="version">
+                  main (None )
+                </div>
+              
+            
+
+            
 
 
   
@@ -226,6 +247,7 @@
   </form>
 </div>
 
+            
           </div>
 
           
@@ -234,9 +256,20 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/torchrl_demo.html">Introduction to TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tensordict_tutorial.html">TensorDict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tensordict_module.html">TensorDictModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/torch_envs.html">TorchRL envs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/multi_task.html">Task-specific policy in multi-task environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a></li>
+</ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/knowledge_base.html">Knowledge Base</a></li>
 </ul>
 
@@ -304,6 +337,27 @@
         <div class="pytorch-content-left">
 
         
+          <div class="pytorch-call-to-action-links">
+            <div id="tutorial-type">index</div>
+
+            <div id="google-colab-link">
+              <img class="call-to-action-img" src="_static/images/pytorch-colab.svg"/>
+              <div class="call-to-action-desktop-view">Run in Google Colab</div>
+              <div class="call-to-action-mobile-view">Colab</div>
+            </div>
+            <div id="download-notebook-link">
+              <img class="call-to-action-notebook-img" src="_static/images/pytorch-download.svg"/>
+              <div class="call-to-action-desktop-view">Download Notebook</div>
+              <div class="call-to-action-mobile-view">Notebook</div>
+            </div>
+            <div id="github-view-link">
+              <img class="call-to-action-img" src="_static/images/pytorch-github.svg"/>
+              <div class="call-to-action-desktop-view">View on GitHub</div>
+              <div class="call-to-action-mobile-view">GitHub</div>
+            </div>
+          </div>
+
+        
           
           <div class="rst-content">
           
@@ -312,6 +366,10 @@
               
   <section id="welcome-to-the-torchrl-documentation">
 <h1>Welcome to the TorchRL Documentation!<a class="headerlink" href="#welcome-to-the-torchrl-documentation" title="Permalink to this heading">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The TensorDict class has been moved out of TorchRL into a dedicated library. Take a look at <a class="reference external" href="./tensordict">the documentation</a> or find the source code <a class="reference external" href="https://github.com/pytorch-labs/tensordict">on GitHub</a>.</p>
+</div>
 <p>TorchRL is an open-source Reinforcement Learning (RL) library for PyTorch.</p>
 <p>It provides pytorch and python-first, low and high level abstractions for RL that are intended to be efficient, modular, documented and properly tested.
 The code is aimed at supporting research in RL. Most of it is written in python in a highly modular way, such that researchers can easily swap components, transform them or write new ones with little effort.</p>
@@ -325,8 +383,81 @@ Common environment libraries (e.g. OpenAI gym) are only optional.</p>
 <p>On the low-level end, torchrl comes with a set of highly re-usable functionals
 for <a class="reference internal" href="reference/objectives.html"><span class="doc">cost functions</span></a>, <span class="xref std std-ref">returns</span> and data processing.</p>
 <p>TorchRL aims at a high modularity and good runtime performance.</p>
+</section>
+<section id="tutorials">
+<h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/torchrl_demo.html">Introduction to TorchRL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#envs">Envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#using-environments-and-modules">Using Environments and Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#state-of-the-library">State of the Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torchrl_demo.html#installing-the-library">Installing the Library</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tensordict_tutorial.html">TensorDict</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_tutorial.html#improving-the-modularity-of-codes">Improving the modularity of codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_tutorial.html#tensordict-structure">TensorDict structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_tutorial.html#tensordict-dictionary-features">TensorDict Dictionary Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_tutorial.html#tensordict-tensor-features">TensorDict tensor features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tensordict_module.html">TensorDictModule</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_module.html#tensordictmodule-by-examples">TensorDictModule by examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_module.html#do-s-and-don-t-with-tensordictmodule">Do’s and don’t with TensorDictModule</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tensordict_module.html#showcase-implementing-a-transformer-using-tensordictmodule">Showcase: Implementing a transformer using TensorDictModule</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/torch_envs.html">TorchRL envs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#gym-environments">Gym environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#deepmind-control-environments">DeepMind Control environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#transforming-envs">Transforming envs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#environment-device">Environment device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#running-environments-in-parallel">Running environments in parallel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#transforming-parallel-environments">Transforming parallel environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/torch_envs.html#vecnorm">VecNorm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/multi_task.html">Task-specific policy in multi-task environments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/multi_task.html#policy">Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/multi_task.html#executing-diverse-tasks-in-parallel">Executing diverse tasks in parallel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/multi_task.html#rollout">Rollout</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#environment">Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#normalization-of-the-observations">Normalization of the observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#building-the-model">Building the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#evaluator-building-your-recorder-object">Evaluator: building your recorder object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#replay-buffer">Replay buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#hyperparameters">Hyperparameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#time-to-train-the-policy">Time to train the policy!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#experiment-results">Experiment results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_ddpg.html#sampling-trajectories-and-using-td-lambda">Sampling trajectories and using TD(lambda)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#hyperparameters">Hyperparameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#building-the-environment">Building the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#the-problem">The problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#building-the-model-deep-q-network">Building the model (Deep Q-network)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#regular-dqn">Regular DQN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#td-lambda">TD-lambda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/coding_dqn.html#conclusion-and-possible-improvements">Conclusion and possible improvements</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="references">
+<h1>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/collectors.html">torchrl.collectors package</a><ul>
@@ -336,8 +467,7 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/data.html">torchrl.data package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/data.html#replay-buffers">Replay Buffers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/data.html#composable-replay-buffers-prototype">Composable Replay Buffers (Prototype)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/data.html#tensordict">TensorDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/data.html#composable-replay-buffers">Composable Replay Buffers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data.html#tensorspec">TensorSpec</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/data.html#utils">Utils</a></li>
 </ul>
@@ -345,12 +475,14 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
 <li class="toctree-l2"><a class="reference internal" href="reference/envs.html">torchrl.envs package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/generated/torchrl.envs.EnvBase.html">EnvBase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/generated/torchrl.envs.GymLikeEnv.html">GymLikeEnv</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/generated/torchrl.envs.SerialEnv.html">SerialEnv</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/generated/torchrl.envs.ParallelEnv.html">ParallelEnv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/torchrl.envs.EnvMetaData.html">EnvMetaData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/torchrl.envs.Specs.html">Specs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/envs.html#vectorized-envs">Vectorized envs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/envs.html#transforms">Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/envs.html#recorders">Recorders</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/envs.html#helpers">Helpers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/envs.html#domain-specific">Domain-specific</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/envs.html#libraries">Libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reference/envs.html#transforms">Transforms</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/modules.html">torchrl.modules package</a><ul>
@@ -369,14 +501,19 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
 <li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#sac">SAC</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#redq">REDQ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#ppo">PPO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#a2c">A2C</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#reinforce">Reinforce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#dreamer">Dreamer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#returns">Returns</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/objectives.html#utils">Utils</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/trainers.html">torchrl.trainers package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/trainers.html#checkpointing">Checkpointing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/trainers.html#trainer-and-hooks">Trainer and hooks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/trainers.html#builders">Builders</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/trainers.html#utils">Utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/trainers.html#loggers">Loggers</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/utils.html">torchrl._utils package</a><ul>
@@ -385,9 +522,17 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
 </li>
 </ul>
 </li>
+</ul>
+</div>
+</section>
+<section id="knowledge-base">
+<h1>Knowledge Base<a class="headerlink" href="#knowledge-base" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="reference/knowledge_base.html">Knowledge Base</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/knowledge_base.html#contributing">Contributing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/generated/knowledge_base/GYM.html">Working with gym</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/GYM.html#what-is-openai-gym">What is OpenAI Gym?</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/GYM.html#versioning">Versioning</a></li>
 </ul>
 </li>
@@ -404,14 +549,20 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/generated/knowledge_base/MUJOCO_INSTALLATION.html#common-issues-when-rendering-mujoco-environments">Common Issues when rendering Mujoco Environments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/generated/knowledge_base/PRO-TIPS.html">Pro-tips</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/PRO-TIPS.html#training-on-a-cluster">Training on a cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/generated/knowledge_base/PRO-TIPS.html">Pro-tips and Debugging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/PRO-TIPS.html#gradient-related-errors-newcomers">Gradient-related errors [Newcomers]</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/PRO-TIPS.html#my-training-is-too-slow-newcomers-intermediate">My Training is too slow [Newcomers / intermediate]</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/PRO-TIPS.html#common-bugs">Common bugs</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/generated/knowledge_base/RESOURCES.html">Useful resources</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/RESOURCES.html#pytorch-documentation">Pytorch documentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/RESOURCES.html#functorch-documentation"><code class="docutils literal notranslate"><span class="pre">functorch</span></code> documentation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/RESOURCES.html#useful-rl-repos-blogs-and-websites">Useful RL repos, blogs and websites</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/generated/knowledge_base/VERSIONING_ISSUES.html">Versioning Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/generated/knowledge_base/VERSIONING_ISSUES.html#pytorch-version">Pytorch version</a></li>
 </ul>
 </li>
 </ul>
@@ -436,7 +587,7 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="reference/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="tutorials/torchrl_demo.html" class="btn btn-neutral float-right" title="Introduction to TorchRL" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
     </div>
@@ -470,6 +621,9 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Welcome to the TorchRL Documentation!</a></li>
+<li><a class="reference internal" href="#tutorials">Tutorials</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#knowledge-base">Knowledge Base</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
@@ -569,7 +723,7 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
             <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
             <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
             <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
-          </ul>  
+          </ul>
           </div>
 
         <div class="footer-links-col">
@@ -582,7 +736,7 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
           </ul>
          </div>
         </div>
-        
+
         <div class="privacy-policy">
           <ul>
             <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
@@ -632,7 +786,7 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
           <li>
             <a href="https://pytorch.org/ecosystem">Ecosystem</a>
           </li>
-            
+
           <li>
             <a href="https://pytorch.org/mobile">Mobile</a>
           </li>
@@ -694,7 +848,7 @@ for <a class="reference internal" href="reference/objectives.html"><span class="
           <li class="resources-mobile-menu-title">
             Resources
           </li>
-            
+
            <ul class="resources-mobile-menu-items">
 
             <li>

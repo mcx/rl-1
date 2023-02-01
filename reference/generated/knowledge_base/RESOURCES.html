@@ -34,10 +34,22 @@
   <link rel="stylesheet" href="../../../_static/sg_gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/sg_gallery-dataframe.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="prev" title="Pro-tips" href="PRO-TIPS.html" />
+    <link rel="next" title="Versioning Issues" href="VERSIONING_ISSUES.html" />
+    <link rel="prev" title="Pro-tips and Debugging" href="PRO-TIPS.html" />
   <!-- Google Analytics -->
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117752657-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117752657-2');
+    </script>
   
   <!-- End Google Analytics -->
   
@@ -212,7 +224,17 @@
         <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           <div class="pytorch-left-menu-search">
             
-    
+
+            
+              
+              
+                <div class="version">
+                  main (None )
+                </div>
+              
+            
+
+            
 
 
   
@@ -226,6 +248,7 @@
   </form>
 </div>
 
+            
           </div>
 
           
@@ -234,9 +257,20 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/torchrl_demo.html">Introduction to TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tensordict_tutorial.html">TensorDict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tensordict_module.html">TensorDictModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/torch_envs.html">TorchRL envs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/multi_task.html">Task-specific policy in multi-task environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">API Reference</a></li>
+</ul>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../knowledge_base.html">Knowledge Base</a></li>
 </ul>
 
@@ -306,6 +340,27 @@
         <div class="pytorch-content-left">
 
         
+          <div class="pytorch-call-to-action-links">
+            <div id="tutorial-type">reference/generated/knowledge_base/RESOURCES</div>
+
+            <div id="google-colab-link">
+              <img class="call-to-action-img" src="../../../_static/images/pytorch-colab.svg"/>
+              <div class="call-to-action-desktop-view">Run in Google Colab</div>
+              <div class="call-to-action-mobile-view">Colab</div>
+            </div>
+            <div id="download-notebook-link">
+              <img class="call-to-action-notebook-img" src="../../../_static/images/pytorch-download.svg"/>
+              <div class="call-to-action-desktop-view">Download Notebook</div>
+              <div class="call-to-action-mobile-view">Notebook</div>
+            </div>
+            <div id="github-view-link">
+              <img class="call-to-action-img" src="../../../_static/images/pytorch-github.svg"/>
+              <div class="call-to-action-desktop-view">View on GitHub</div>
+              <div class="call-to-action-mobile-view">GitHub</div>
+            </div>
+          </div>
+
+        
           
           <div class="rst-content">
           
@@ -332,6 +387,7 @@
 <li><p><a class="reference external" href="https://www.deepmind.com/learning-resources/reinforcement-learning-lecture-series-2021">RL lectures from Deepmind</a></p></li>
 <li><p><a class="reference external" href="https://neptune.ai/blog/best-benchmarks-for-reinforcement-learning">Best benchmarks</a></p></li>
 <li><p><a class="reference external" href="https://github.com/aikorea/awesome-rl">Awesome RL: Reinforcement learning resources curated</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2301.01379">A Succinct Summary of Reinforcement Learning</a></p></li>
 </ul>
 </section>
 <section id="forums">
@@ -376,8 +432,10 @@ they still provide good examples of RL solutions with and without PyTorch:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="VERSIONING_ISSUES.html" class="btn btn-neutral float-right" title="Versioning Issues" accesskey="n" rel="next">Next <img src="../../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
-        <a href="PRO-TIPS.html" class="btn btn-neutral" title="Pro-tips" accesskey="p" rel="prev"><img src="../../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+        <a href="PRO-TIPS.html" class="btn btn-neutral" title="Pro-tips and Debugging" accesskey="p" rel="prev"><img src="../../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -518,7 +576,7 @@ they still provide good examples of RL solutions with and without PyTorch:</p>
             <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
             <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
             <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
-          </ul>  
+          </ul>
           </div>
 
         <div class="footer-links-col">
@@ -531,7 +589,7 @@ they still provide good examples of RL solutions with and without PyTorch:</p>
           </ul>
          </div>
         </div>
-        
+
         <div class="privacy-policy">
           <ul>
             <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
@@ -581,7 +639,7 @@ they still provide good examples of RL solutions with and without PyTorch:</p>
           <li>
             <a href="https://pytorch.org/ecosystem">Ecosystem</a>
           </li>
-            
+
           <li>
             <a href="https://pytorch.org/mobile">Mobile</a>
           </li>
@@ -643,7 +701,7 @@ they still provide good examples of RL solutions with and without PyTorch:</p>
           <li class="resources-mobile-menu-title">
             Resources
           </li>
-            
+
            <ul class="resources-mobile-menu-items">
 
             <li>

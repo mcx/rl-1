@@ -34,11 +34,22 @@
   <link rel="stylesheet" href="../../_static/sg_gallery-binder.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/sg_gallery-dataframe.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/sg_gallery-rendered-html.css" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="make_sac_model" href="torchrl.trainers.helpers.make_sac_model.html" />
-    <link rel="prev" title="make_ddpg_actor" href="torchrl.trainers.helpers.make_ddpg_actor.html" />
+    <link rel="next" title="make_redq_loss" href="torchrl.trainers.helpers.make_redq_loss.html" />
+    <link rel="prev" title="make_ppo_loss" href="torchrl.trainers.helpers.make_ppo_loss.html" />
   <!-- Google Analytics -->
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117752657-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-117752657-2');
+    </script>
   
   <!-- End Google Analytics -->
   
@@ -213,7 +224,17 @@
         <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           <div class="pytorch-left-menu-search">
             
-    
+
+            
+              
+              
+                <div class="version">
+                  main (None )
+                </div>
+              
+            
+
+            
 
 
   
@@ -227,6 +248,7 @@
   </form>
 </div>
 
+            
           </div>
 
           
@@ -235,9 +257,20 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/torchrl_demo.html">Introduction to TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/pretrained_models.html">Using pretrained models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tensordict_tutorial.html">TensorDict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tensordict_module.html">TensorDictModule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/torch_envs.html">TorchRL envs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/multi_task.html">Task-specific policy in multi-task environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/coding_ddpg.html">Coding DDPG using TorchRL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/coding_dqn.html">Coding a pixel-based DQN using TorchRL</a></li>
+</ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a></li>
+</ul>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../knowledge_base.html">Knowledge Base</a></li>
 </ul>
 
@@ -309,6 +342,27 @@
         <div class="pytorch-content-left">
 
         
+          <div class="pytorch-call-to-action-links">
+            <div id="tutorial-type">reference/generated/torchrl.trainers.helpers.make_ppo_model</div>
+
+            <div id="google-colab-link">
+              <img class="call-to-action-img" src="../../_static/images/pytorch-colab.svg"/>
+              <div class="call-to-action-desktop-view">Run in Google Colab</div>
+              <div class="call-to-action-mobile-view">Colab</div>
+            </div>
+            <div id="download-notebook-link">
+              <img class="call-to-action-notebook-img" src="../../_static/images/pytorch-download.svg"/>
+              <div class="call-to-action-desktop-view">Download Notebook</div>
+              <div class="call-to-action-mobile-view">Notebook</div>
+            </div>
+            <div id="github-view-link">
+              <img class="call-to-action-img" src="../../_static/images/pytorch-github.svg"/>
+              <div class="call-to-action-desktop-view">View on GitHub</div>
+              <div class="call-to-action-mobile-view">GitHub</div>
+            </div>
+          </div>
+
+        
           
           <div class="rst-content">
           
@@ -319,7 +373,7 @@
 <h1>make_ppo_model<a class="headerlink" href="#make-ppo-model" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torchrl.trainers.helpers.make_ppo_model">
-<span class="sig-prename descclassname"><span class="pre">torchrl.trainers.helpers.</span></span><span class="sig-name descname"><span class="pre">make_ppo_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proof_environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="torchrl.envs.EnvBase.html#torchrl.envs.EnvBase" title="torchrl.envs.common.EnvBase"><span class="pre">EnvBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys_actor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.11)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="torchrl.modules.ActorValueOperator.html#torchrl.modules.ActorValueOperator" title="torchrl.modules.tensordict_module.actors.ActorValueOperator"><span class="pre">ActorValueOperator</span></a></span></span><a class="headerlink" href="#torchrl.trainers.helpers.make_ppo_model" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">torchrl.trainers.helpers.</span></span><span class="sig-name descname"><span class="pre">make_ppo_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proof_environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="torchrl.envs.EnvBase.html#torchrl.envs.EnvBase" title="torchrl.envs.common.EnvBase"><span class="pre">EnvBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys_actor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.11)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="torchrl.modules.tensordict_module.ActorValueOperator.html#torchrl.modules.tensordict_module.ActorValueOperator" title="torchrl.modules.tensordict_module.actors.ActorValueOperator"><span class="pre">ActorValueOperator</span></a></span></span><a class="reference internal" href="../../_modules/torchrl/trainers/helpers/models.html#make_ppo_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torchrl.trainers.helpers.make_ppo_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actor-value model constructor helper function.</p>
 <p>Currently constructs MLP networks with immutable default arguments as described in “Proximal Policy Optimization
 Algorithms”, <a class="reference external" href="https://arxiv.org/abs/1707.06347">https://arxiv.org/abs/1707.06347</a>
@@ -347,8 +401,8 @@ the <cite>cfg.from_pixels</cite> argument.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hydra</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hydra.core.config_store</span> <span class="kn">import</span> <span class="n">ConfigStore</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">dataclasses</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">proof_environment</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="n">GymEnv</span><span class="p">(</span><span class="s2">&quot;HalfCheetah-v2&quot;</span><span class="p">),</span> <span class="n">Compose</span><span class="p">(</span><span class="n">DoubleToFloat</span><span class="p">([</span><span class="s2">&quot;next_observation&quot;</span><span class="p">]),</span>
-<span class="gp">... </span>   <span class="n">CatTensors</span><span class="p">([</span><span class="s2">&quot;next_observation&quot;</span><span class="p">],</span> <span class="s2">&quot;next_observation_vector&quot;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proof_environment</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="n">GymEnv</span><span class="p">(</span><span class="s2">&quot;HalfCheetah-v2&quot;</span><span class="p">),</span> <span class="n">Compose</span><span class="p">(</span><span class="n">DoubleToFloat</span><span class="p">([</span><span class="s2">&quot;observation&quot;</span><span class="p">]),</span>
+<span class="gp">... </span>   <span class="n">CatTensors</span><span class="p">([</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="s2">&quot;observation_vector&quot;</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">config_fields</span> <span class="o">=</span> <span class="p">[(</span><span class="n">config_field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">config_field</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">config_field</span><span class="p">)</span> <span class="k">for</span> <span class="n">config_cls</span> <span class="ow">in</span>
 <span class="gp">... </span>                   <span class="p">(</span><span class="n">PPOModelConfig</span><span class="p">,</span> <span class="n">EnvConfig</span><span class="p">)</span>
@@ -403,10 +457,10 @@ the <cite>cfg.from_pixels</cite> argument.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="torchrl.trainers.helpers.make_sac_model.html" class="btn btn-neutral float-right" title="make_sac_model" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="torchrl.trainers.helpers.make_redq_loss.html" class="btn btn-neutral float-right" title="make_redq_loss" accesskey="n" rel="next">Next <img src="../../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="torchrl.trainers.helpers.make_ddpg_actor.html" class="btn btn-neutral" title="make_ddpg_actor" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="torchrl.trainers.helpers.make_ppo_loss.html" class="btn btn-neutral" title="make_ppo_loss" accesskey="p" rel="prev"><img src="../../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -540,7 +594,7 @@ the <cite>cfg.from_pixels</cite> argument.</p></li>
             <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
             <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
             <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
-          </ul>  
+          </ul>
           </div>
 
         <div class="footer-links-col">
@@ -553,7 +607,7 @@ the <cite>cfg.from_pixels</cite> argument.</p></li>
           </ul>
          </div>
         </div>
-        
+
         <div class="privacy-policy">
           <ul>
             <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
@@ -603,7 +657,7 @@ the <cite>cfg.from_pixels</cite> argument.</p></li>
           <li>
             <a href="https://pytorch.org/ecosystem">Ecosystem</a>
           </li>
-            
+
           <li>
             <a href="https://pytorch.org/mobile">Mobile</a>
           </li>
@@ -665,7 +719,7 @@ the <cite>cfg.from_pixels</cite> argument.</p></li>
           <li class="resources-mobile-menu-title">
             Resources
           </li>
-            
+
            <ul class="resources-mobile-menu-items">
 
             <li>
