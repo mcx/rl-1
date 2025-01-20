@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Using pretrained models
 =======================
@@ -13,6 +12,28 @@ This tutorial explains how to use pretrained models in TorchRL.
 # in one or the other context. In this tutorial, we will be using R3M (https://arxiv.org/abs/2203.12601),
 # but other models (e.g. VIP) will work equally well.
 #
+
+# sphinx_gallery_start_ignore
+import warnings
+
+warnings.filterwarnings("ignore")
+from torch import multiprocessing
+
+# TorchRL prefers spawn method, that restricts creation of  ``~torchrl.envs.ParallelEnv`` inside
+# `__main__` method call, but for the easy of reading the code switch to fork
+# which is also a default spawn method in Google's Colaboratory
+try:
+    is_sphinx = __sphinx_build__
+except NameError:
+    is_sphinx = False
+
+try:
+    multiprocessing.set_start_method("spawn" if is_sphinx else "fork")
+except RuntimeError:
+    pass
+
+# sphinx_gallery_end_ignore
+
 import torch.cuda
 from tensordict.nn import TensorDictSequential
 from torch import nn
@@ -20,7 +41,12 @@ from torchrl.envs import R3MTransform, TransformedEnv
 from torchrl.envs.libs.gym import GymEnv
 from torchrl.modules import Actor
 
-device = "cuda:0" if torch.cuda.device_count() else "cpu"
+is_fork = multiprocessing.get_start_method() == "fork"
+device = (
+    torch.device(0)
+    if torch.cuda.is_available() and not is_fork
+    else torch.device("cpu")
+)
 
 ##############################################################################
 # Let us first create an environment. For the sake of simplicity, we will be using
@@ -37,10 +63,16 @@ base_env = GymEnv("Ant-v4", from_pixels=True, device=device)
 # in the output tensordict. Our policy, consisting of a single layer MLP, will then read this vector and compute
 # the corresponding action.
 #
-r3m = R3MTransform("resnet50", in_keys=["pixels"], download=True).to(device)
+r3m = R3MTransform(
+    "resnet50",
+    in_keys=["pixels"],
+    download=True,
+)
 env_transformed = TransformedEnv(base_env, r3m)
 net = nn.Sequential(
-    nn.LazyLinear(128), nn.Tanh(), nn.Linear(128, base_env.action_spec.shape[-1])
+    nn.LazyLinear(128, device=device),
+    nn.Tanh(),
+    nn.Linear(128, base_env.action_spec.shape[-1], device=device),
 )
 policy = Actor(net, in_keys=["r3m_vec"])
 
@@ -106,3 +138,9 @@ print("stored data:", storage._storage)
 #
 batch = rb.sample(32)
 print("data after sampling:", batch)
+
+# sphinx_gallery_start_ignore
+import time
+
+time.sleep(10)
+# sphinx_gallery_end_ignore

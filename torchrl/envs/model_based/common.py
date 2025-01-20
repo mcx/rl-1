@@ -4,19 +4,19 @@
 # LICENSE file in the root directory of this source tree.
 
 import abc
-from typing import List, Optional, Union
+import warnings
+from typing import List, Optional
 
-import numpy as np
 import torch
 from tensordict import TensorDict
+from tensordict.nn import TensorDictModule
 
 from torchrl.data.utils import DEVICE_TYPING
 from torchrl.envs.common import EnvBase
-from torchrl.modules.tensordict_module import SafeModule
 
 
-class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
-    """Basic environnement for Model Based RL algorithms.
+class ModelBasedEnvBase(EnvBase):
+    """Basic environnement for Model Based RL sota-implementations.
 
     Wrapper around the model of the MBRL algorithm.
     It is meant to give an env framework to a world model (including but not limited to observations, reward, done state and safety constraints models).
@@ -27,37 +27,37 @@ class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
     Example:
         >>> import torch
         >>> from tensordict import TensorDict
-        >>> from torchrl.data import CompositeSpec, UnboundedContinuousTensorSpec
+        >>> from torchrl.data import Composite, Unbounded
         >>> class MyMBEnv(ModelBasedEnvBase):
         ...     def __init__(self, world_model, device="cpu", dtype=None, batch_size=None):
         ...         super().__init__(world_model, device=device, dtype=dtype, batch_size=batch_size)
-        ...         self.observation_spec = CompositeSpec(
-        ...             hidden_observation=UnboundedContinuousTensorSpec((4,))
+        ...         self.observation_spec = Composite(
+        ...             hidden_observation=Unbounded((4,))
         ...         )
-        ...         self.input_spec = CompositeSpec(
-        ...             hidden_observation=UnboundedContinuousTensorSpec((4,)),
-        ...             action=UnboundedContinuousTensorSpec((1,)),
+        ...         self.state_spec = Composite(
+        ...             hidden_observation=Unbounded((4,)),
         ...         )
-        ...         self.reward_spec = UnboundedContinuousTensorSpec((1,))
+        ...         self.action_spec = Unbounded((1,))
+        ...         self.reward_spec = Unbounded((1,))
         ...
         ...     def _reset(self, tensordict: TensorDict) -> TensorDict:
-        ...         tensordict = TensorDict({},
+        ...         tensordict = TensorDict(
         ...             batch_size=self.batch_size,
         ...             device=self.device,
         ...         )
-        ...         tensordict = tensordict.update(self.input_spec.rand())
+        ...         tensordict = tensordict.update(self.state_spec.rand())
         ...         tensordict = tensordict.update(self.observation_spec.rand())
         ...         return tensordict
         >>> # This environment is used as follows:
         >>> import torch.nn as nn
         >>> from torchrl.modules import MLP, WorldModelWrapper
         >>> world_model = WorldModelWrapper(
-        ...     SafeModule(
+        ...     TensorDictModule(
         ...         MLP(out_features=4, activation_class=nn.ReLU, activate_last_layer=True, depth=0),
         ...         in_keys=["hidden_observation", "action"],
         ...         out_keys=["hidden_observation"],
         ...     ),
-        ...     SafeModule(
+        ...     TensorDictModule(
         ...         nn.Linear(4, 1),
         ...         in_keys=["hidden_observation"],
         ...         out_keys=["reward"],
@@ -84,10 +84,10 @@ class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
 
 
     Properties:
-        - observation_spec (CompositeSpec): sampling spec of the observations;
+        - observation_spec (Composite): sampling spec of the observations;
         - action_spec (TensorSpec): sampling spec of the actions;
         - reward_spec (TensorSpec): sampling spec of the rewards;
-        - input_spec (CompositeSpec): sampling spec of the inputs;
+        - input_spec (Composite): sampling spec of the inputs;
         - batch_size (torch.Size): batch_size to be used by the env. If not set, the env accept tensordicts of all batch sizes.
         - device (torch.device): device where the env input and output are expected to live
 
@@ -112,17 +112,15 @@ class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
 
     def __init__(
         self,
-        world_model: SafeModule,
+        world_model: TensorDictModule,
         params: Optional[List[torch.Tensor]] = None,
         buffers: Optional[List[torch.Tensor]] = None,
         device: DEVICE_TYPING = "cpu",
-        dtype: Optional[Union[torch.dtype, np.dtype]] = None,
         batch_size: Optional[torch.Size] = None,
         run_type_checks: bool = False,
     ):
         super(ModelBasedEnvBase, self).__init__(
             device=device,
-            dtype=dtype,
             batch_size=batch_size,
             run_type_checks=run_type_checks,
         )
@@ -138,9 +136,15 @@ class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
 
     def set_specs_from_env(self, env: EnvBase):
         """Sets the specs of the environment from the specs of the given environment."""
-        self.observation_spec = env.observation_spec.clone().to(self.device)
-        self.reward_spec = env.reward_spec.clone().to(self.device)
-        self.input_spec = env.input_spec.clone().to(self.device)
+        device = self.device
+        output_spec = env.output_spec.clone()
+        input_spec = env.input_spec.clone()
+        if device is not None:
+            output_spec = output_spec.to(device)
+            input_spec = input_spec.to(device)
+        self.__dict__["_output_spec"] = output_spec
+        self.__dict__["_input_spec"] = input_spec
+        self.empty_cache()
 
     def _step(
         self,
@@ -157,13 +161,13 @@ class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
             )
         else:
             tensordict_out = self.world_model(tensordict_out)
-        # Step requires a done flag. No sense for MBRL so we set it to False
-        if "done" not in self.world_model.out_keys:
-            tensordict_out["done"] = torch.zeros(
-                tensordict_out.shape,
-                dtype=torch.bool,
-                device=tensordict_out.device,
-            )
+        # done can be missing, it will be filled by `step`
+        tensordict_out = tensordict_out.select(
+            *self.observation_spec.keys(),
+            *self.full_done_spec.keys(),
+            *self.full_reward_spec.keys(),
+            strict=False,
+        )
         return tensordict_out
 
     @abc.abstractmethod
@@ -171,4 +175,5 @@ class ModelBasedEnvBase(EnvBase, metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     def _set_seed(self, seed: Optional[int]) -> int:
-        raise Warning("Set seed isn't needed for model based environments")
+        warnings.warn("Set seed isn't needed for model based environments")
+        return seed

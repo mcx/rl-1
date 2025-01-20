@@ -16,12 +16,16 @@ from torch import nn
 
 try:
     from tensorboard.backend.event_processing import event_accumulator
-    from torchrl.record.loggers import TensorboardLogger
+    from torchrl.record.loggers.tensorboard import TensorboardLogger
 
     _has_tb = True
 except ImportError:
     _has_tb = False
 
+if os.getenv("PYTORCH_TEST_FBCODE"):
+    from pytorch.rl.test._utils_internal import PONG_VERSIONED
+else:
+    from _utils_internal import PONG_VERSIONED
 from tensordict import TensorDict
 from torchrl.data import (
     LazyMemmapStorage,
@@ -31,17 +35,18 @@ from torchrl.data import (
     TensorDictReplayBuffer,
 )
 from torchrl.envs.libs.gym import _has_gym
-from torchrl.trainers import Recorder, Trainer
+from torchrl.trainers import LogValidationReward, Trainer
 from torchrl.trainers.helpers import transformed_env_constructor
 from torchrl.trainers.trainers import (
     _has_tqdm,
     _has_ts,
     BatchSubSampler,
     CountFramesLog,
-    LogReward,
+    LogScalar,
     mask_batch,
     OptimizerHook,
     ReplayBufferTrainer,
+    REWARD_KEY,
     RewardNormalizer,
     SelectKeys,
     UpdateWeights,
@@ -88,11 +93,10 @@ _mocking_optim = MockingOptim()
 
 def mocking_trainer(file=None, optimizer=_mocking_optim) -> Trainer:
     trainer = Trainer(
-        MockingCollector(),
-        *[
-            None,
-        ]
-        * 2,
+        collector=MockingCollector(),
+        total_frames=None,
+        frame_skip=None,
+        optim_steps_per_batch=None,
         loss_module=MockingLossModule(),
         optimizer=optimizer,
         save_trainer_file=file,
@@ -202,7 +206,9 @@ class TestRB:
         S = 100
         storage = ListStorage(S)
         if prioritized:
-            replay_buffer = TensorDictPrioritizedReplayBuffer(1.1, 0.9, storage=storage)
+            replay_buffer = TensorDictPrioritizedReplayBuffer(
+                alpha=1.1, beta=0.9, storage=storage
+            )
         else:
             replay_buffer = TensorDictReplayBuffer(storage=storage)
 
@@ -259,8 +265,8 @@ class TestRB:
 
         if prioritized:
             replay_buffer = TensorDictPrioritizedReplayBuffer(
-                1.1,
-                0.9,
+                alpha=1.1,
+                beta=0.9,
                 storage=storage,
             )
         else:
@@ -286,13 +292,13 @@ class TestRB:
         trainer._process_batch_hook(td)
         td_out = trainer._process_optim_batch_hook(td)
         if prioritized:
-            td_out.set(replay_buffer.priority_key, torch.rand(N))
+            td_out.unlock_().set(replay_buffer.priority_key, torch.rand(N))
         trainer._post_loss_hook(td_out)
 
         trainer2 = mocking_trainer()
         if prioritized:
             replay_buffer2 = TensorDictPrioritizedReplayBuffer(
-                1.1, 0.9, storage=storage
+                alpha=1.1, beta=0.9, storage=storage
             )
         else:
             replay_buffer2 = TensorDictReplayBuffer(storage=storage)
@@ -397,8 +403,8 @@ class TestRB:
             storage = make_storage()
             if prioritized:
                 replay_buffer = TensorDictPrioritizedReplayBuffer(
-                    1.1,
-                    0.9,
+                    alpha=1.1,
+                    beta=0.9,
                     storage=storage,
                 )
             else:
@@ -421,7 +427,7 @@ class TestRB:
             # sample from rb
             td_out = trainer._process_optim_batch_hook(td)
             if prioritized:
-                td_out.set(replay_buffer.priority_key, torch.rand(N))
+                td_out.unlock_().set(replay_buffer.priority_key, torch.rand(N))
             trainer._post_loss_hook(td_out)
             trainer.save_trainer(True)
 
@@ -429,8 +435,8 @@ class TestRB:
             storage2 = make_storage()
             if prioritized:
                 replay_buffer2 = TensorDictPrioritizedReplayBuffer(
-                    1.1,
-                    0.9,
+                    alpha=1.1,
+                    beta=0.9,
                     storage=storage2,
                 )
             else:
@@ -444,7 +450,7 @@ class TestRB:
             rb_trainer2.register(trainer2)
             if re_init:
                 trainer2._process_batch_hook(td.to_tensordict().zero_())
-            trainer2.load_from_file(file)
+            trainer2.load_from_file(file, weights_only=False)
             assert state_dict_has_been_called[0]
             assert load_state_dict_has_been_called[0]
             assert state_dict_has_been_called_td[0]
@@ -632,9 +638,9 @@ class TestLogReward:
         trainer = mocking_trainer()
         trainer.collected_frames = 0
 
-        log_reward = LogReward(logname, log_pbar=pbar)
+        log_reward = LogScalar(logname, log_pbar=pbar)
         trainer.register_op("pre_steps_log", log_reward)
-        td = TensorDict({"reward": torch.ones(3)}, [3])
+        td = TensorDict({REWARD_KEY: torch.ones(3)}, [3])
         trainer._pre_steps_log_hook(td)
         if _has_tqdm and pbar:
             assert trainer._pbar_str[logname] == 1
@@ -648,9 +654,9 @@ class TestLogReward:
         trainer = mocking_trainer()
         trainer.collected_frames = 0
 
-        log_reward = LogReward(logname, log_pbar=pbar)
+        log_reward = LogScalar(logname, log_pbar=pbar)
         log_reward.register(trainer)
-        td = TensorDict({"reward": torch.ones(3)}, [3])
+        td = TensorDict({REWARD_KEY: torch.ones(3)}, [3])
         trainer._pre_steps_log_hook(td)
         if _has_tqdm and pbar:
             assert trainer._pbar_str[logname] == 1
@@ -669,15 +675,15 @@ class TestRewardNorm:
 
         batch = 10
         reward = torch.randn(batch, 1)
-        td = TensorDict({"reward": reward.clone()}, [batch])
+        td = TensorDict({REWARD_KEY: reward.clone()}, [batch])
         td_out = trainer._process_batch_hook(td)
-        assert (td_out.get("reward") == reward).all()
+        assert (td_out.get(REWARD_KEY) == reward).all()
         assert not reward_normalizer._normalize_has_been_called
 
         td_norm = trainer._process_optim_batch_hook(td)
         assert reward_normalizer._normalize_has_been_called
-        torch.testing.assert_close(td_norm.get("reward").mean(), torch.zeros([]))
-        torch.testing.assert_close(td_norm.get("reward").std(), torch.ones([]))
+        torch.testing.assert_close(td_norm.get(REWARD_KEY).mean(), torch.zeros([]))
+        torch.testing.assert_close(td_norm.get(REWARD_KEY).std(), torch.ones([]))
 
     def test_reward_norm_state_dict(self):
         torch.manual_seed(0)
@@ -688,7 +694,7 @@ class TestRewardNorm:
 
         batch = 10
         reward = torch.randn(batch, 1)
-        td = TensorDict({"reward": reward.clone()}, [batch])
+        td = TensorDict({REWARD_KEY: reward.clone()}, [batch])
         trainer._process_batch_hook(td)
         trainer._process_optim_batch_hook(td)
         state_dict = trainer.state_dict()
@@ -740,7 +746,7 @@ class TestRewardNorm:
 
             batch = 10
             reward = torch.randn(batch, 1)
-            td = TensorDict({"reward": reward.clone()}, [batch])
+            td = TensorDict({REWARD_KEY: reward.clone()}, [batch])
             trainer._process_batch_hook(td)
             trainer._process_optim_batch_hook(td)
             trainer.save_trainer(True)
@@ -834,7 +840,7 @@ class TestSubSampler:
 class TestRecorder:
     def _get_args(self):
         args = Namespace()
-        args.env_name = "ALE/Pong-v5"
+        args.env_name = PONG_VERSIONED()
         args.env_task = ""
         args.grayscale = True
         args.env_library = "gym"
@@ -850,7 +856,7 @@ class TestRecorder:
         args.record_interval = 2
         args.catframes = 4
         args.image_size = 84
-        args.collector_devices = ["cpu"]
+        args.collector_device = ["cpu"]
         args.categorical_action_encoding = False
         return args
 
@@ -859,7 +865,7 @@ class TestRecorder:
         with tempfile.TemporaryDirectory() as folder:
             logger = TensorboardLogger(exp_name=folder)
 
-            recorder = transformed_env_constructor(
+            environment = transformed_env_constructor(
                 args,
                 video_tag="tmp",
                 norm_obs_only=True,
@@ -867,11 +873,11 @@ class TestRecorder:
                 logger=logger,
             )()
 
-            recorder = Recorder(
+            recorder = LogValidationReward(
                 record_frames=args.record_frames,
                 frame_skip=args.frame_skip,
                 policy_exploration=None,
-                recorder=recorder,
+                environment=environment,
                 record_interval=args.record_interval,
             )
             trainer = mocking_trainer()
@@ -892,7 +898,7 @@ class TestRecorder:
                     },
                 )
                 ea.Reload()
-                img = ea.Images("tmp_ALE/Pong-v5_video")
+                img = ea.Images(f"tmp_{PONG_VERSIONED()}_video")
                 try:
                     assert len(img) == N // args.record_interval
                     break
@@ -913,13 +919,12 @@ class TestRecorder:
         os.environ["CKPT_BACKEND"] = backend
         state_dict_has_been_called = [False]
         load_state_dict_has_been_called = [False]
-        Recorder.state_dict, Recorder_state_dict = _fun_checker(
-            Recorder.state_dict, state_dict_has_been_called
+        LogValidationReward.state_dict, Recorder_state_dict = _fun_checker(
+            LogValidationReward.state_dict, state_dict_has_been_called
         )
-        (
-            Recorder.load_state_dict,
-            Recorder_load_state_dict,
-        ) = _fun_checker(Recorder.load_state_dict, load_state_dict_has_been_called)
+        (LogValidationReward.load_state_dict, Recorder_load_state_dict,) = _fun_checker(
+            LogValidationReward.load_state_dict, load_state_dict_has_been_called
+        )
 
         args = self._get_args()
 
@@ -933,19 +938,20 @@ class TestRecorder:
                 raise NotImplementedError
             trainer = mocking_trainer(file)
 
-            recorder = transformed_env_constructor(
+            environment = transformed_env_constructor(
                 args,
                 video_tag="tmp",
                 norm_obs_only=True,
                 stats={"loc": 0, "scale": 1},
                 logger=logger,
             )()
+            environment.rollout(2)
 
-            recorder = Recorder(
+            recorder = LogValidationReward(
                 record_frames=args.record_frames,
                 frame_skip=args.frame_skip,
                 policy_exploration=None,
-                recorder=recorder,
+                environment=environment,
                 record_interval=args.record_interval,
             )
             recorder.register(trainer)
@@ -962,8 +968,8 @@ class TestRecorder:
             assert recorder2._count == 8
             assert state_dict_has_been_called[0]
             assert load_state_dict_has_been_called[0]
-        Recorder.state_dict = Recorder_state_dict
-        Recorder.load_state_dict = Recorder_load_state_dict
+        LogValidationReward.state_dict = Recorder_state_dict
+        LogValidationReward.load_state_dict = Recorder_load_state_dict
 
 
 def test_updateweights():

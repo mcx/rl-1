@@ -4,9 +4,9 @@
 # LICENSE file in the root directory of this source tree.
 
 import torch
-from tensordict.tensordict import TensorDict, TensorDictBase
+from tensordict import TensorDict, TensorDictBase
 
-from torchrl.envs import EnvBase
+from torchrl.envs.common import EnvBase
 from torchrl.modules.planners.common import MPCPlannerBase
 
 
@@ -45,20 +45,20 @@ class CEMPlanner(MPCPlannerBase):
 
     Examples:
         >>> from tensordict import TensorDict
-        >>> from torchrl.data import CompositeSpec, UnboundedContinuousTensorSpec
+        >>> from torchrl.data import Composite, Unbounded
         >>> from torchrl.envs.model_based import ModelBasedEnvBase
         >>> from torchrl.modules import SafeModule
         >>> class MyMBEnv(ModelBasedEnvBase):
         ...     def __init__(self, world_model, device="cpu", dtype=None, batch_size=None):
         ...         super().__init__(world_model, device=device, dtype=dtype, batch_size=batch_size)
-        ...         self.observation_spec = CompositeSpec(
-        ...             next_hidden_observation=UnboundedContinuousTensorSpec((4,))
+        ...         self.state_spec = Composite(
+        ...             hidden_observation=Unbounded((4,))
         ...         )
-        ...         self.input_spec = CompositeSpec(
-        ...             hidden_observation=UnboundedContinuousTensorSpec((4,)),
-        ...             action=UnboundedContinuousTensorSpec((1,)),
+        ...         self.observation_spec = Composite(
+        ...             hidden_observation=Unbounded((4,))
         ...         )
-        ...         self.reward_spec = UnboundedContinuousTensorSpec((1,))
+        ...         self.action_spec = Unbounded((1,))
+        ...         self.reward_spec = Unbounded((1,))
         ...
         ...     def _reset(self, tensordict: TensorDict) -> TensorDict:
         ...         tensordict = TensorDict(
@@ -67,9 +67,11 @@ class CEMPlanner(MPCPlannerBase):
         ...             device=self.device,
         ...         )
         ...         tensordict = tensordict.update(
-        ...             self.input_spec.rand())
+        ...             self.full_state_spec.rand())
         ...         tensordict = tensordict.update(
-        ...             self.observation_spec.rand())
+        ...             self.full_action_spec.rand())
+        ...         tensordict = tensordict.update(
+        ...             self.full_observation_spec.rand())
         ...         return tensordict
         ...
         >>> from torchrl.modules import MLP, WorldModelWrapper
@@ -92,16 +94,19 @@ class CEMPlanner(MPCPlannerBase):
         >>> env.rollout(5, planner)
         TensorDict(
             fields={
-                action: Tensor(torch.Size([5, 1]), dtype=torch.float32),
-                done: Tensor(torch.Size([5, 1]), dtype=torch.bool),
-                hidden_observation: Tensor(torch.Size([5, 4]), dtype=torch.float32),
-                next: LazyStackedTensorDict(
+                action: Tensor(shape=torch.Size([5, 1]), device=cpu, dtype=torch.float32, is_shared=False),
+                done: Tensor(shape=torch.Size([5, 1]), device=cpu, dtype=torch.bool, is_shared=False),
+                hidden_observation: Tensor(shape=torch.Size([5, 4]), device=cpu, dtype=torch.float32, is_shared=False),
+                next: TensorDict(
                     fields={
-                        hidden_observation: Tensor(torch.Size([5, 4]), dtype=torch.float32)},
+                        done: Tensor(shape=torch.Size([5, 1]), device=cpu, dtype=torch.bool, is_shared=False),
+                        hidden_observation: Tensor(shape=torch.Size([5, 4]), device=cpu, dtype=torch.float32, is_shared=False),
+                        reward: Tensor(shape=torch.Size([5, 1]), device=cpu, dtype=torch.float32, is_shared=False),
+                        terminated: Tensor(shape=torch.Size([5, 1]), device=cpu, dtype=torch.bool, is_shared=False)},
                     batch_size=torch.Size([5]),
                     device=cpu,
                     is_shared=False),
-                reward: Tensor(torch.Size([5, 1]), dtype=torch.float32)},
+                terminated: Tensor(shape=torch.Size([5, 1]), device=cpu, dtype=torch.bool, is_shared=False)},
             batch_size=torch.Size([5]),
             device=cpu,
             is_shared=False)
@@ -114,7 +119,7 @@ class CEMPlanner(MPCPlannerBase):
         optim_steps: int,
         num_candidates: int,
         top_k: int,
-        reward_key: str = "reward",
+        reward_key: str = ("next", "reward"),
         action_key: str = "action",
     ):
         super().__init__(env=env, action_key=action_key)

@@ -2,8 +2,9 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
+import argparse
 import os
+
 import sys
 import time
 
@@ -11,7 +12,8 @@ import pytest
 import torch
 import torch.distributed.rpc as rpc
 import torch.multiprocessing as mp
-from tensordict.tensordict import TensorDict
+from tensordict import TensorDict
+from torchrl._utils import logger as torchrl_logger
 from torchrl.data.replay_buffers import RemoteTensorDictReplayBuffer
 from torchrl.data.replay_buffers.samplers import RandomSampler
 from torchrl.data.replay_buffers.storages import LazyMemmapStorage
@@ -22,10 +24,10 @@ RETRY_BACKOFF = 3
 
 
 class ReplayBufferNode(RemoteTensorDictReplayBuffer):
-    def __init__(self, capacity: int):
+    def __init__(self, capacity: int, scratch_dir=None):
         super().__init__(
             storage=LazyMemmapStorage(
-                max_size=capacity, scratch_dir="/tmp/", device=torch.device("cpu")
+                max_size=capacity, scratch_dir=scratch_dir, device=torch.device("cpu")
             ),
             sampler=RandomSampler(),
             writer=RoundRobinWriter(),
@@ -53,7 +55,9 @@ def sample_from_buffer_remotely_returns_correct_tensordict_test(rank, name, worl
         _, inserted = _add_random_tensor_dict_to_buffer(buffer)
         sampled = _sample_from_buffer(buffer, 1)
         assert type(sampled) is type(inserted) is TensorDict
-        assert (sampled == inserted)["a"].item()
+        a_sample = sampled["a"]
+        a_insert = inserted["a"]
+        assert (a_sample == a_insert).all()
 
 
 @pytest.mark.skipif(
@@ -107,7 +111,7 @@ def _construct_buffer(target):
             buffer_rref = rpc.remote(target, ReplayBufferNode, args=(1000,))
             return buffer_rref
         except Exception as e:
-            print(f"Failed to connect: {e}")
+            torchrl_logger.info(f"Failed to connect: {e}")
             time.sleep(RETRY_BACKOFF)
     raise RuntimeError("Unable to connect to replay buffer")
 
@@ -131,3 +135,8 @@ def _sample_from_buffer(buffer, batch_size):
     return rpc.rpc_sync(
         buffer.owner(), ReplayBufferNode.sample, args=(buffer, batch_size)
     )
+
+
+if __name__ == "__main__":
+    args, unknown = argparse.ArgumentParser().parse_known_args()
+    pytest.main([__file__, "--capture", "no", "--exitfirst"] + unknown)

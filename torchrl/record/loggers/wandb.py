@@ -2,37 +2,44 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import importlib.util
 
 import os
 import warnings
-from typing import Optional
+from typing import Dict, Optional, Sequence, Union
 
 from torch import Tensor
 
 from .common import Logger
 
-
-try:
-    import wandb
-
-    _has_wandb = True
-except ImportError:
-    _has_wandb = False
-
-
-try:
-    from omegaconf import OmegaConf
-
-    _has_omgaconf = True
-except ImportError:
-    _has_omgaconf = False
+_has_wandb = importlib.util.find_spec("wandb") is not None
+_has_omegaconf = importlib.util.find_spec("omegaconf") is not None
 
 
 class WandbLogger(Logger):
     """Wrapper for the wandb logger.
 
+    The keyword arguments are mainly based on the :func:`wandb.init` kwargs.
+    See the doc `here <https://docs.wandb.ai/ref/python/init>`__.
+
     Args:
         exp_name (str): The name of the experiment.
+        offline (bool, optional): if ``True``, the logs will be stored locally
+            only. Defaults to ``False``.
+        save_dir (path, optional): the directory where to save data. Exclusive with
+            ``log_dir``.
+        log_dir (path, optional): the directory where to save data. Exclusive with
+            ``save_dir``.
+        id (str, optional): A unique ID for this run, used for resuming.
+            It must be unique in the project, and if you delete a run you can't reuse the ID.
+        project (str, optional): The name of the project where you're sending
+            the new run. If the project is not specified, the run is put in
+            an ``"Uncategorized"`` project.
+
+    Keyword Args:
+        fps (int, optional): Number of frames per second when recording videos. Defaults to ``30``.
+        **kwargs: Extra keyword arguments for ``wandb.init``. See relevant page for
+            more info.
 
     """
 
@@ -48,6 +55,8 @@ class WandbLogger(Logger):
         save_dir: str = None,
         id: str = None,
         project: str = None,
+        *,
+        video_fps: int = 32,
         **kwargs,
     ) -> None:
         if not _has_wandb:
@@ -64,6 +73,7 @@ class WandbLogger(Logger):
         self.save_dir = save_dir
         self.id = id
         self.project = project
+        self.video_fps = video_fps
         self._wandb_kwargs = {
             "name": exp_name,
             "dir": save_dir,
@@ -92,11 +102,13 @@ class WandbLogger(Logger):
         Returns:
             WandbLogger: The wandb experiment logger.
         """
+        if not _has_wandb:
+            raise ImportError("Wandb is not installed")
+        import wandb
+
         if self.offline:
             os.environ["WANDB_MODE"] = "dryrun"
 
-        if not _has_wandb:
-            raise ImportError("Wandb is not installed")
         return wandb.init(**self._wandb_kwargs)
 
     def log_scalar(self, name: str, value: float, step: Optional[int] = None) -> None:
@@ -104,7 +116,7 @@ class WandbLogger(Logger):
 
         Args:
             name (str): The name of the scalar.
-            value (float): The value of the scalar.
+            value (:obj:`float`): The value of the scalar.
             step (int, optional): The step at which the scalar is logged.
                 Defaults to None.
         """
@@ -121,9 +133,11 @@ class WandbLogger(Logger):
             video (Tensor): The video to be logged.
             **kwargs: Other keyword arguments. By construction, log_video
                 supports 'step' (integer indicating the step index), 'format'
-                (default is 'mp4') and 'fps' (default: 6). Other kwargs are
+                (default is 'mp4') and 'fps' (defaults to ``self.video_fps``). Other kwargs are
                 passed as-is to the :obj:`experiment.log` method.
         """
+        import wandb
+
         # check for correct format of the video tensor ((N), T, C, H, W)
         # check that the color channel (C) is either 1 or 3
         if video.dim() != 5 or video.size(dim=2) not in {1, 3}:
@@ -140,7 +154,7 @@ class WandbLogger(Logger):
                     "moviepy not found, videos cannot be logged with TensorboardLogger"
                 )
         self.video_log_counter += 1
-        fps = kwargs.pop("fps", 6)
+        fps = kwargs.pop("fps", self.video_fps)
         step = kwargs.pop("step", None)
         format = kwargs.pop("format", "mp4")
         if step not in (None, self._prev_video_step, self._prev_video_step + 1):
@@ -159,21 +173,46 @@ class WandbLogger(Logger):
             **kwargs,
         )
 
-    def log_hparams(self, cfg: "DictConfig") -> None:  # noqa: F821
+    def log_hparams(self, cfg: Union["DictConfig", Dict]) -> None:  # noqa: F821
         """Logs the hyperparameters of the experiment.
 
         Args:
-            cfg (DictConfig): The configuration of the experiment.
+            cfg (DictConfig or dict): The configuration of the experiment.
 
         """
-        if type(cfg) is not dict and _has_omgaconf:
-            if not _has_omgaconf:
+        if type(cfg) is not dict and _has_omegaconf:
+            if not _has_omegaconf:
                 raise ImportError(
                     "OmegaConf could not be imported. "
                     "Cannot log hydra configs without OmegaConf."
                 )
+            from omegaconf import OmegaConf
+
             cfg = OmegaConf.to_container(cfg, resolve=True)
         self.experiment.config.update(cfg, allow_val_change=True)
 
     def __repr__(self) -> str:
         return f"WandbLogger(experiment={self.experiment.__repr__()})"
+
+    def log_histogram(self, name: str, data: Sequence, **kwargs):
+        """Add histogram to log.
+
+        Args:
+            name (str): Data identifier
+            data (torch.Tensor, numpy.ndarray, or string/blobname): Values to build histogram
+
+        Keyword Args:
+            step (int): Global step value to record
+            bins (str): One of {‘tensorflow’,’auto’, ‘fd’, …}. This determines how the bins are made. You can find other options in: https://docs.scipy.org/doc/numpy/reference/generated/numpy.histogram.html
+
+        """
+        import wandb
+
+        num_bins = kwargs.pop("bins", None)
+        step = kwargs.pop("step", None)
+        extra_kwargs = {}
+        if step is not None:
+            extra_kwargs["trainer/step"] = step
+        self.experiment.log(
+            {name: wandb.Histogram(data, num_bins=num_bins), **extra_kwargs}
+        )

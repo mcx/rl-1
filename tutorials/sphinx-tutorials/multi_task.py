@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Task-specific policy in multi-task environments
 ================================================
@@ -13,9 +12,25 @@ This tutorial details how multi-task policies and batched environments can be us
 import warnings
 
 warnings.filterwarnings("ignore")
+
+from torch import multiprocessing
+
+# TorchRL prefers spawn method, that restricts creation of  ``~torchrl.envs.ParallelEnv`` inside
+# `__main__` method call, but for the easy of reading the code switch to fork
+# which is also a default spawn method in Google's Colaboratory
+try:
+    is_sphinx = __sphinx_build__
+except NameError:
+    is_sphinx = False
+
+try:
+    multiprocessing.set_start_method("spawn" if is_sphinx else "fork")
+except RuntimeError:
+    pass
+
 # sphinx_gallery_end_ignore
 
-import torch
+from tensordict import LazyStackedTensorDict
 from tensordict.nn import TensorDictModule, TensorDictSequential
 from torch import nn
 
@@ -61,9 +76,9 @@ env2 = TransformedEnv(
 tdreset1 = env1.reset()
 tdreset2 = env2.reset()
 
-# In TorchRL, stacking is done in a lazy manner: the original tensordicts
+# With LazyStackedTensorDict, stacking is done in a lazy manner: the original tensordicts
 # can still be recovered by indexing the main tensordict
-tdreset = torch.stack([tdreset1, tdreset2], 0)
+tdreset = LazyStackedTensorDict.lazy_stack([tdreset1, tdreset2], 0)
 assert tdreset[0] is tdreset1
 
 ###############################################################################
@@ -72,9 +87,10 @@ print(tdreset[0])
 
 ###############################################################################
 # Policy
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^^
+#
 # We will design a policy where a backbone reads the "observation" key.
-# Then specific sub-components will ready the "observation_stand" and
+# Then specific sub-components will read the "observation_stand" and
 # "observation_walk" keys of the stacked tensordicts, if they are present,
 # and pass them through the dedicated sub-network.
 
@@ -119,8 +135,9 @@ seq(tdreset)
 
 ###############################################################################
 # Executing diverse tasks in parallel
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# We can parallelize the operations if the common keys-value pairs share the
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#
+# We can parallelize the operations if the common key-value pairs share the
 # same specs (in particular their shape and dtype must match: you can't do the
 # following if the observation shapes are different but are pointed to by the
 # same key).
@@ -174,7 +191,6 @@ print(tdreset)
 print(tdreset[0])
 print(tdreset[1])  # should be different but all have an "action" key
 
-###############################################################################
 
 env.step(tdreset)  # computes actions and execute steps in parallel
 print(tdreset)
@@ -183,7 +199,7 @@ print(tdreset[1])  # next_observation has now been written
 
 ###############################################################################
 # Rollout
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^^^
 
 td_rollout = env.rollout(100, policy=seq, return_contiguous=False)
 
@@ -194,3 +210,6 @@ td_rollout[:, 0]  # tensordict of the first step: only the common keys are shown
 ###############################################################################
 
 td_rollout[0]  # tensordict of the first env: the stand obs is present
+
+env.close()
+del env

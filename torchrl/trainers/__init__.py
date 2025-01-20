@@ -8,6 +8,8 @@ from .trainers import (
     ClearCudaCache,
     CountFramesLog,
     LogReward,
+    LogScalar,
+    LogValidationReward,
     mask_batch,
     OptimizerHook,
     Recorder,
@@ -15,5 +17,6 @@ from .trainers import (
     RewardNormalizer,
     SelectKeys,
     Trainer,
+    TrainerHookBase,
     UpdateWeights,
 )

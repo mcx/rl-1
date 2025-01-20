@@ -2,18 +2,26 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from __future__ import annotations
 
+import functools
 import math
-from typing import Optional, Sequence, Union
+import warnings
+from typing import List, Optional, Sequence, Union
 
 import torch
+
+from tensordict.nn import TensorDictModuleBase
+from tensordict.utils import NestedKey
 from torch import distributions as d, nn
+from torch.nn import functional as F
+from torch.nn.modules.dropout import _DropoutNd
 from torch.nn.modules.lazy import LazyModuleMixin
 from torch.nn.parameter import UninitializedBuffer, UninitializedParameter
-
 from torchrl._utils import prod
+from torchrl.data.tensor_specs import Unbounded
 from torchrl.data.utils import DEVICE_TYPING, DEVICE_TYPING_ARGS
-from torchrl.envs.utils import exploration_mode
+from torchrl.envs.utils import exploration_type, ExplorationType
 from torchrl.modules.distributions.utils import _cast_transform_device
 from torchrl.modules.utils import inv_softplus
 
@@ -32,14 +40,14 @@ class NoisyLinear(nn.Linear):
     Args:
         in_features (int): input features dimension
         out_features (int): out features dimension
-        bias (bool): if True, a bias term will be added to the matrix multiplication: Ax + b.
-            default: True
+        bias (bool, optional): if ``True``, a bias term will be added to the matrix multiplication: Ax + b.
+            Defaults to ``True``
         device (DEVICE_TYPING, optional): device of the layer.
-            default: "cpu"
+            Defaults to ``"cpu"``
         dtype (torch.dtype, optional): dtype of the parameters.
-            default: None
-        std_init (scalar): initial value of the Gaussian standard deviation before optimization.
-            default: 1.0
+            Defaults to ``None`` (default pytorch dtype)
+        std_init (scalar, optional): initial value of the Gaussian standard deviation before optimization.
+            Defaults to ``0.1``
 
     """
 
@@ -154,13 +162,14 @@ class NoisyLazyLinear(LazyModuleMixin, NoisyLinear):
 
     Args:
         out_features (int): out features dimension
-        bias (bool): if True, a bias term will be added to the matrix multiplication: Ax + b.
-            default: True
+        bias (bool, optional): if ``True``, a bias term will be added to the matrix multiplication: Ax + b.
+            Defaults to ``True``.
         device (DEVICE_TYPING, optional): device of the layer.
+            Defaults to ``"cpu"``.
         dtype (torch.dtype, optional): dtype of the parameters.
-            default: None
+            Defaults to the default PyTorch dtype.
         std_init (scalar): initial value of the Gaussian standard deviation before optimization.
-            default: 1.0
+            Defaults to 0.1
 
     """
 
@@ -253,48 +262,53 @@ class gSDEModule(nn.Module):
             outputs a distribution average.
         action_dim (int): the dimension of the action.
         state_dim (int): the state dimension.
-        sigma_init (float): the initial value of the standard deviation. The
+        sigma_init (:obj:`float`, optional): the initial value of the standard deviation. The
             softplus non-linearity is used to map the log_sigma parameter to a
-            positive value.
-        scale_min (float, optional): min value of the scale.
-        scale_max (float, optional): max value of the scale.
+            positive value. Defaults to ``1.0``.
+        scale_min (:obj:`float`, optional): min value of the scale. Defaults to ``0.01``.
+        scale_max (:obj:`float`, optional): max value of the scale. Defaults to ``10.0``.
+        learn_sigma (bool, optional): if ``True``, the value of the ``sigma``
+            variable will be included in the module parameters, making it learnable.
+            Defaults to ``True``.
         transform (torch.distribution.Transform, optional): a transform to apply
-            to the sampled action.
-        device (DEVICE_TYPING, optional): device to create the model on.
+            to the sampled action. Defaults to ``None`` (no transform).
+        device (torch.device, optional): device to create the model on.
+            Defaults to ``"cpu"``.
 
     Examples:
         >>> from tensordict import TensorDict
-        >>> from torchrl.modules import SafeModule, SafeSequential, ProbabilisticActor, TanhNormal
+        >>> from torchrl.modules import ProbabilisticActor, TanhNormal
+        >>> from tensordict.nn import TensorDictModule, ProbabilisticTensorDictSequential
         >>> batch, state_dim, action_dim = 3, 7, 5
         >>> model = nn.Linear(state_dim, action_dim)
-        >>> deterministic_policy = SafeModule(model, in_keys=["obs"], out_keys=["action"])
-        >>> stochatstic_part = SafeModule(
+        >>> deterministic_policy = TensorDictModule(model, in_keys=["obs"], out_keys=["action"])
+        >>> stochastic_part = TensorDictModule(
         ...     gSDEModule(action_dim, state_dim),
         ...     in_keys=["action", "obs", "_eps_gSDE"],
         ...     out_keys=["loc", "scale", "action", "_eps_gSDE"])
-        >>> stochatstic_part = ProbabilisticActor(stochatstic_part,
-        ...      dist_in_keys=["loc", "scale"],
+        >>> stochastic_part = ProbabilisticActor(stochastic_part,
+        ...      in_keys=["loc", "scale"],
         ...      distribution_class=TanhNormal)
-        >>> stochatstic_policy = SafeSequential(deterministic_policy, stochatstic_part)
+        >>> stochastic_policy = ProbabilisticTensorDictSequential(deterministic_policy, *stochastic_part)
         >>> tensordict = TensorDict({'obs': torch.randn(state_dim), '_epx_gSDE': torch.zeros(1)}, [])
-        >>> _ = stochatstic_policy(tensordict)
+        >>> _ = stochastic_policy(tensordict)
         >>> print(tensordict)
         TensorDict(
             fields={
-                obs: Tensor(torch.Size([7]), dtype=torch.float32),
-                _epx_gSDE: Tensor(torch.Size([1]), dtype=torch.float32),
-                action: Tensor(torch.Size([5]), dtype=torch.float32),
-                loc: Tensor(torch.Size([5]), dtype=torch.float32),
-                scale: Tensor(torch.Size([5]), dtype=torch.float32),
-                _eps_gSDE: Tensor(torch.Size([5, 7]), dtype=torch.float32)},
+                _eps_gSDE: Tensor(shape=torch.Size([5, 7]), device=cpu, dtype=torch.float32, is_shared=False),
+                _epx_gSDE: Tensor(shape=torch.Size([1]), device=cpu, dtype=torch.float32, is_shared=False),
+                action: Tensor(shape=torch.Size([5]), device=cpu, dtype=torch.float32, is_shared=False),
+                loc: Tensor(shape=torch.Size([5]), device=cpu, dtype=torch.float32, is_shared=False),
+                obs: Tensor(shape=torch.Size([7]), device=cpu, dtype=torch.float32, is_shared=False),
+                scale: Tensor(shape=torch.Size([5]), device=cpu, dtype=torch.float32, is_shared=False)},
             batch_size=torch.Size([]),
-            device=cpu,
+            device=None,
             is_shared=False)
         >>> action_first_call = tensordict.get("action").clone()
-        >>> dist, *_ = stochatstic_policy.get_dist(tensordict)
+        >>> dist = stochastic_policy.get_dist(tensordict)
         >>> print(dist)
         TanhNormal(loc: torch.Size([5]), scale: torch.Size([5]))
-        >>> _ = stochatstic_policy(tensordict)
+        >>> _ = stochastic_policy(tensordict)
         >>> action_second_call = tensordict.get("action").clone()
         >>> assert (action_second_call == action_first_call).all()  # actions are the same
         >>> assert (action_first_call != dist.base_dist.base_dist.loc).all()  # actions are truly stochastic
@@ -339,7 +353,9 @@ class gSDEModule(nn.Module):
             )
 
         if sigma_init != 0.0:
-            self.register_buffer("sigma_init", torch.tensor(sigma_init, device=device))
+            self.register_buffer(
+                "sigma_init", torch.as_tensor(sigma_init, device=device)
+            )
 
     @property
     def sigma(self):
@@ -351,7 +367,7 @@ class gSDEModule(nn.Module):
 
     def forward(self, mu, state, _eps_gSDE):
         sigma = self.sigma.clamp_max(self.scale_max)
-        _err_explo = f"gSDE behaviour for exploration mode {exploration_mode()} is not defined. Choose from 'random' or 'mode'."
+        _err_explo = f"gSDE behavior for exploration mode {exploration_type()} is not defined. Choose from 'random' or 'mode'."
 
         if state.shape[:-1] != mu.shape[:-1]:
             _err_msg = f"mu and state are expected to have matching batch size, got shapes {mu.shape} and {state.shape}"
@@ -362,12 +378,12 @@ class gSDEModule(nn.Module):
             _err_msg = f"noise and state are expected to have matching batch size, got shapes {_eps_gSDE.shape} and {state.shape}"
             raise RuntimeError(_err_msg)
 
-        if _eps_gSDE is None and exploration_mode() == "mode":
+        if _eps_gSDE is None and exploration_type() != ExplorationType.RANDOM:
             # noise is irrelevant in with no exploration
             _eps_gSDE = torch.zeros(
                 *state.shape[:-1], *sigma.shape, device=sigma.device, dtype=sigma.dtype
             )
-        elif (_eps_gSDE is None and exploration_mode() == "random") or (
+        elif (_eps_gSDE is None and exploration_type() == ExplorationType.RANDOM) or (
             _eps_gSDE is not None
             and _eps_gSDE.numel() == prod(state.shape[:-1])
             and (_eps_gSDE == 0).all()
@@ -381,16 +397,20 @@ class gSDEModule(nn.Module):
         gSDE_noise = sigma * _eps_gSDE
         eps = (gSDE_noise @ state.unsqueeze(-1)).squeeze(-1)
 
-        if exploration_mode() in ("random",):
+        if exploration_type() in (ExplorationType.RANDOM,):
             action = mu + eps
-        elif exploration_mode() in ("mode",):
+        elif exploration_type() in (
+            ExplorationType.MODE,
+            ExplorationType.MEAN,
+            ExplorationType.DETERMINISTIC,
+        ):
             action = mu
         else:
             raise RuntimeError(_err_explo)
 
         sigma = (sigma * state.unsqueeze(-2)).pow(2).sum(-1).clamp_min(1e-5).sqrt()
         if not torch.isfinite(sigma).all():
-            print("inf sigma")
+            warnings.warn("inf sigma")
 
         if self.transform is not None:
             action = self.transform(action)
@@ -408,8 +428,22 @@ class LazygSDEModule(LazyModuleMixin, gSDEModule):
     This module behaves exactly as gSDEModule except that it does not require the
     user to specify the action and state dimension.
     If the input state is multi-dimensional (i.e. more than one state is provided), the
-    sigma value is initialized such that the resulting variance will match :obj:`sigma_init`
-    (or 1 if no :obj:`sigma_init` value is provided).
+    sigma value is initialized such that the resulting variance will match ``sigma_init``
+    (or 1 if no ``sigma_init`` value is provided).
+
+    Args:
+        sigma_init (:obj:`float`, optional): the initial value of the standard deviation. The
+            softplus non-linearity is used to map the log_sigma parameter to a
+            positive value. Defaults to ``None`` (learned).
+        scale_min (:obj:`float`, optional): min value of the scale. Defaults to ``0.01``.
+        scale_max (:obj:`float`, optional): max value of the scale. Defaults to ``10.0``.
+        learn_sigma (bool, optional): if ``True``, the value of the ``sigma``
+            variable will be included in the module parameters, making it learnable.
+            Defaults to ``True``.
+        transform (torch.distribution.Transform, optional): a transform to apply
+            to the sampled action. Defaults to ``None`` (no transform).
+        device (torch.device, optional): device to create the model on.
+            Defaults to ``"cpu"``.
 
     """
 
@@ -494,3 +528,203 @@ class LazygSDEModule(LazyModuleMixin, gSDEModule):
                         )
                     self._sigma.materialize((action_dim, state_dim))
                     self._sigma.data.copy_(self.sigma_init.expand_as(self._sigma))
+
+
+class ConsistentDropout(_DropoutNd):
+    """Implements a :class:`~torch.nn.Dropout` variant with consistent dropout.
+
+    This method is proposed in `"Consistent Dropout for Policy Gradient Reinforcement Learning" (Hausknecht & Wagener, 2022)
+    <https://arxiv.org/abs/2202.11818>`_.
+
+    This :class:`~torch.nn.Dropout` variant attempts to increase training stability and
+    reduce update variance by caching the dropout masks used during rollout
+    and reusing them during the update phase.
+
+    The class you are looking at is independent of the rest of TorchRL's API and does not require tensordict to be run.
+    :class:`~torchrl.modules.ConsistentDropoutModule` is a wrapper around ``ConsistentDropout`` that capitalizes on the extensibility
+    of ``TensorDict``s by storing generated dropout masks in the transition ``TensorDict`` themselves.
+    See this class for a detailed explanation as well as usage examples.
+
+    There is otherwise little conceptual deviance from the PyTorch
+    :class:`~torch.nn.Dropout` implementation.
+
+    ..note:: TorchRL's data collectors perform rollouts in :meth:`~torch.no_grad` mode but not in `eval` mode,
+        so the dropout masks will be applied unless the policy passed to the collector is in eval mode.
+
+    .. note:: Unlike other exploration modules, :class:`~torchrl.modules.ConsistentDropoutModule`
+      uses the ``train``/``eval`` mode to comply with the regular `Dropout` API in PyTorch.
+      The :func:`~torchrl.envs.utils.set_exploration_type` context manager will have no effect on
+      this module.
+
+    Args:
+       p (:obj:`float`, optional): Dropout probability. Defaults to ``0.5``.
+
+    .. seealso::
+
+      - :class:`~torchrl.collectors.SyncDataCollector`:
+        :meth:`~torchrl.collectors.SyncDataCollector.rollout()` and :meth:`~torchrl.collectors.SyncDataCollector.iterator()`
+      - :class:`~torchrl.collectors.MultiSyncDataCollector`:
+        Uses :meth:`~torchrl.collectors.collectors._main_async_collector` (:class:`~torchrl.collectors.SyncDataCollector`)
+        under the hood
+      - :class:`~torchrl.collectors.MultiaSyncDataCollector`, :class:`~torchrl.collectors.aSyncDataCollector`: Ditto.
+
+    """
+
+    def __init__(self, p: float = 0.5):
+        super().__init__()
+        self.p = p
+
+    def forward(
+        self, x: torch.Tensor, mask: torch.Tensor | None = None
+    ) -> torch.Tensor:
+        """During training (rollouts & updates), this call masks a tensor full of ones before multiplying with the input tensor.
+
+        During evaluation, this call results in a no-op and only the input is returned.
+
+        Args:
+            x (torch.Tensor): the input tensor.
+            mask (torch.Tensor, optional): the optional mask for the dropout.
+
+        Returns: a tensor and a corresponding mask in train mode, and only a tensor in eval mode.
+        """
+        if self.training:
+            if mask is None:
+                mask = self.make_mask(input=x)
+            return x * mask, mask
+
+        return x
+
+    def make_mask(self, *, input=None, shape=None):
+        if input is not None:
+            return F.dropout(
+                torch.ones_like(input), self.p, self.training, inplace=False
+            )
+        elif shape is not None:
+            return F.dropout(torch.ones(shape), self.p, self.training, inplace=False)
+        else:
+            raise RuntimeError("input or shape must be passed to make_mask.")
+
+
+class ConsistentDropoutModule(TensorDictModuleBase):
+    """A TensorDictModule wrapper for :class:`~ConsistentDropout`.
+
+    Args:
+        p (:obj:`float`, optional): Dropout probability. Default: ``0.5``.
+        in_keys (NestedKey or list of NestedKeys): keys to be read
+            from input tensordict and passed to this module.
+        out_keys (NestedKey or iterable of NestedKeys): keys to be written to the input tensordict.
+            Defaults to ``in_keys`` values.
+
+    Keyword Args:
+        input_shape (tuple, optional): the shape of the input (non-batchted), used to generate the
+            tensordict primers with :meth:`~.make_tensordict_primer`.
+        input_dtype (torch.dtype, optional): the dtype of the input for the primer. If none is pased,
+            ``torch.get_default_dtype`` is assumed.
+
+    .. note:: To use this class within a policy, one needs the mask to be reset at reset time.
+      This can be achieved through a :class:`~torchrl.envs.TensorDictPrimer` transform that can be obtained
+      with :meth:`~.make_tensordict_primer`. See this method for more information.
+
+    Examples:
+        >>> from tensordict import TensorDict
+        >>> module = ConsistentDropoutModule(p = 0.1)
+        >>> td = TensorDict({"x": torch.randn(3, 4)}, [3])
+        >>> module(td)
+        TensorDict(
+            fields={
+                mask_6127171760: Tensor(shape=torch.Size([3, 4]), device=cpu, dtype=torch.bool, is_shared=False),
+                x: Tensor(shape=torch.Size([3, 4]), device=cpu, dtype=torch.float32, is_shared=False)},
+            batch_size=torch.Size([3]),
+            device=None,
+            is_shared=False)
+    """
+
+    def __init__(
+        self,
+        p: float,
+        in_keys: NestedKey | List[NestedKey],
+        out_keys: NestedKey | List[NestedKey] | None = None,
+        input_shape: torch.Size = None,
+        input_dtype: torch.dtype | None = None,
+    ):
+        if isinstance(in_keys, NestedKey):
+            in_keys = [in_keys, f"mask_{id(self)}"]
+        if out_keys is None:
+            out_keys = list(in_keys)
+        if isinstance(out_keys, NestedKey):
+            out_keys = [out_keys, f"mask_{id(self)}"]
+        if len(in_keys) != 2 or len(out_keys) != 2:
+            raise ValueError(
+                "in_keys and out_keys length must be 2 for consistent dropout."
+            )
+        self.in_keys = in_keys
+        self.out_keys = out_keys
+        self.input_shape = input_shape
+        self.input_dtype = input_dtype
+        super().__init__()
+
+        if not 0 <= p < 1:
+            raise ValueError(f"p must be in [0,1), got p={p: 4.4f}.")
+
+        self.consistent_dropout = ConsistentDropout(p)
+
+    def forward(self, tensordict):
+        x = tensordict.get(self.in_keys[0])
+        mask = tensordict.get(self.in_keys[1], default=None)
+        if self.consistent_dropout.training:
+            x, mask = self.consistent_dropout(x, mask=mask)
+            tensordict.set(self.out_keys[0], x)
+            tensordict.set(self.out_keys[1], mask)
+        else:
+            x = self.consistent_dropout(x, mask=mask)
+            tensordict.set(self.out_keys[0], x)
+
+        return tensordict
+
+    def make_tensordict_primer(self):
+        """Makes a tensordict primer for the environment to generate random masks during reset calls.
+
+        .. seealso:: :func:`torchrl.modules.utils.get_primers_from_module` for a method to generate all primers for a given
+        module.
+
+        Examples:
+            >>> from tensordict.nn import TensorDictSequential as Seq, TensorDictModule as Mod
+            >>> from torchrl.envs import GymEnv, StepCounter, SerialEnv
+            >>> m = Seq(
+            ...     Mod(torch.nn.Linear(7, 4), in_keys=["observation"], out_keys=["intermediate"]),
+            ...     ConsistentDropoutModule(
+            ...         p=0.5,
+            ...         input_shape=(2, 4),
+            ...         in_keys="intermediate",
+            ...     ),
+            ...     Mod(torch.nn.Linear(4, 7), in_keys=["intermediate"], out_keys=["action"]),
+            ... )
+            >>> primer = get_primers_from_module(m)
+            >>> env0 = GymEnv("Pendulum-v1").append_transform(StepCounter(5))
+            >>> env1 = GymEnv("Pendulum-v1").append_transform(StepCounter(6))
+            >>> env = SerialEnv(2, [lambda env=env0: env, lambda env=env1: env])
+            >>> env = env.append_transform(primer)
+            >>> r = env.rollout(10, m, break_when_any_done=False)
+            >>> mask = [k for k in r.keys() if k.startswith("mask")][0]
+            >>> assert (r[mask][0, :5] != r[mask][0, 5:6]).any()
+            >>> assert (r[mask][0, :4] == r[mask][0, 4:5]).all()
+
+        """
+        from torchrl.envs.transforms.transforms import TensorDictPrimer
+
+        shape = self.input_shape
+        dtype = self.input_dtype
+        if dtype is None:
+            dtype = torch.get_default_dtype()
+        if shape is None:
+            raise RuntimeError(
+                "Cannot infer the shape of the input automatically. "
+                "Please pass the shape of the tensor to `ConstistentDropoutModule` during construction "
+                "with the `input_shape` kwarg."
+            )
+        return TensorDictPrimer(
+            primers={self.in_keys[1]: Unbounded(dtype=dtype, shape=shape)},
+            default_value=functools.partial(
+                self.consistent_dropout.make_mask, shape=shape
+            ),
+        )

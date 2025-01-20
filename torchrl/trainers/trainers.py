@@ -15,17 +15,26 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Type, U
 
 import numpy as np
 import torch.nn
-from tensordict.tensordict import pad, TensorDictBase
+from tensordict import pad, TensorDictBase
+from tensordict.nn import TensorDictModule
 from tensordict.utils import expand_right
 from torch import nn, optim
 
-from torchrl._utils import _CKPT_BACKEND, KeyDependentDefaultDict
-from torchrl.collectors.collectors import _DataCollector
-from torchrl.data import TensorDictPrioritizedReplayBuffer, TensorDictReplayBuffer
+from torchrl._utils import (
+    _CKPT_BACKEND,
+    KeyDependentDefaultDict,
+    logger as torchrl_logger,
+    VERBOSE,
+)
+from torchrl.collectors.collectors import DataCollectorBase
+from torchrl.collectors.utils import split_trajectories
+from torchrl.data.replay_buffers import (
+    TensorDictPrioritizedReplayBuffer,
+    TensorDictReplayBuffer,
+)
 from torchrl.data.utils import DEVICE_TYPING
 from torchrl.envs.common import EnvBase
-from torchrl.envs.utils import set_exploration_mode
-from torchrl.modules import SafeModule
+from torchrl.envs.utils import ExplorationType, set_exploration_type
 from torchrl.objectives.common import LossModule
 from torchrl.record.loggers import Logger
 
@@ -54,6 +63,7 @@ LOGGER_METHODS = {
 }
 
 TYPE_DESCR = {float: "4.4f", int: ""}
+REWARD_KEY = ("next", "reward")
 
 
 class TrainerHookBase:
@@ -69,6 +79,17 @@ class TrainerHookBase:
 
     @abc.abstractmethod
     def register(self, trainer: Trainer, name: str):
+        """Registers the hook in the trainer at a default location.
+
+        Args:
+            trainer (Trainer): the trainer where the hook must be registered.
+            name (str): the name of the hook.
+
+        .. note::
+          To register the hook at another location than the default, use
+          :meth:`~torchrl.trainers.Trainer.register_op`.
+
+        """
         raise NotImplementedError
 
 
@@ -94,24 +115,25 @@ class Trainer:
         optimizer (optim.Optimizer): An optimizer that trains the parameters
             of the model.
         logger (Logger, optional): a Logger that will handle the logging.
-        optim_steps_per_batch (int, optional): number of optimization steps
+        optim_steps_per_batch (int): number of optimization steps
             per collection of data. An trainer works as follows: a main loop
             collects batches of data (epoch loop), and a sub-loop (training
             loop) performs model updates in between two collections of data.
-            Default is 500
         clip_grad_norm (bool, optional): If True, the gradients will be clipped
             based on the total norm of the model parameters. If False,
             all the partial derivatives will be clamped to
-            (-clip_norm, clip_norm). Default is :obj:`True`.
+            (-clip_norm, clip_norm). Default is ``True``.
         clip_norm (Number, optional): value to be used for clipping gradients.
-            Default is 100.0.
+            Default is None (no clip norm).
         progress_bar (bool, optional): If True, a progress bar will be
             displayed using tqdm. If tqdm is not installed, this option
-            won't have any effect. Default is :obj:`True`
+            won't have any effect. Default is ``True``
         seed (int, optional): Seed to be used for the collector, pytorch and
-            numpy. Default is 42.
+            numpy. Default is ``None``.
         save_trainer_interval (int, optional): How often the trainer should be
-            saved to disk. Default is 10000.
+            saved to disk, in frame count. Default is 10000.
+        log_interval (int, optional): How often the values should be logged,
+            in frame count. Default is 10000.
         save_trainer_file (path, optional): path where to save the trainer.
             Default is None (no saving)
     """
@@ -123,25 +145,26 @@ class Trainer:
         cls._collected_frames: int = 0
         cls._last_log: Dict[str, Any] = {}
         cls._last_save: int = 0
-        cls._log_interval: int = 10000
         cls.collected_frames = 0
         cls._app_state = None
         return super().__new__(cls)
 
     def __init__(
         self,
-        collector: _DataCollector,
+        *,
+        collector: DataCollectorBase,
         total_frames: int,
         frame_skip: int,
+        optim_steps_per_batch: int,
         loss_module: Union[LossModule, Callable[[TensorDictBase], TensorDictBase]],
         optimizer: Optional[optim.Optimizer] = None,
         logger: Optional[Logger] = None,
-        optim_steps_per_batch: int = 500,
         clip_grad_norm: bool = True,
-        clip_norm: float = 100.0,
+        clip_norm: float = None,
         progress_bar: bool = True,
-        seed: int = 42,
+        seed: int = None,
         save_trainer_interval: int = 10000,
+        log_interval: int = 10000,
         save_trainer_file: Optional[Union[str, pathlib.Path]] = None,
     ) -> None:
 
@@ -152,9 +175,12 @@ class Trainer:
         self.optimizer = optimizer
         self.logger = logger
 
+        self._log_interval = log_interval
+
         # seeding
         self.seed = seed
-        self.set_seed()
+        if seed is not None:
+            self.set_seed()
 
         # constants
         self.optim_steps_per_batch = optim_steps_per_batch
@@ -270,12 +296,17 @@ class Trainer:
         if _save and self.save_trainer_file:
             self._save_trainer()
 
-    def load_from_file(self, file: Union[str, pathlib.Path]) -> Trainer:
+    def load_from_file(self, file: Union[str, pathlib.Path], **kwargs) -> Trainer:
+        """Loads a file and its state-dict in the trainer.
+
+        Keyword arguments are passed to the :func:`~torch.load` function.
+
+        """
         if _CKPT_BACKEND == "torchsnapshot":
             snapshot = Snapshot(path=file)
             snapshot.restore(app_state=self.app_state)
         elif _CKPT_BACKEND == "torch":
-            loaded_dict: OrderedDict = torch.load(file)
+            loaded_dict: OrderedDict = torch.load(file, **kwargs)
             self.load_state_dict(loaded_dict)
         return self
 
@@ -285,11 +316,11 @@ class Trainer:
         np.random.seed(seed)
 
     @property
-    def collector(self) -> _DataCollector:
+    def collector(self) -> DataCollectorBase:
         return self._collector
 
     @collector.setter
-    def collector(self, collector: _DataCollector) -> None:
+    def collector(self, collector: DataCollectorBase) -> None:
         self._collector = collector
 
     def register_op(self, dest: str, op: Callable, **kwargs) -> None:
@@ -420,7 +451,6 @@ class Trainer:
 
         for batch in self.collector:
             batch = self._process_batch_hook(batch)
-            self._pre_steps_log_hook(batch)
             current_frames = (
                 batch.get(("collector", "mask"), torch.tensor(batch.numel()))
                 .sum()
@@ -428,6 +458,7 @@ class Trainer:
                 * self.frame_skip
             )
             self.collected_frames += current_frames
+            self._pre_steps_log_hook(batch)
 
             if self.collected_frames > self.collector.init_random_frames:
                 self.optim_steps(batch)
@@ -447,10 +478,14 @@ class Trainer:
         self.collector.shutdown()
 
     def __del__(self):
-        self.collector.shutdown()
+        try:
+            self.collector.shutdown()
+        except Exception:
+            pass
 
     def shutdown(self):
-        print("shutting down collector")
+        if VERBOSE:
+            torchrl_logger.info("shutting down collector")
         self.collector.shutdown()
 
     def optim_steps(self, batch: TensorDictBase) -> None:
@@ -487,7 +522,6 @@ class Trainer:
         collected_frames = self.collected_frames
         for key, item in kwargs.items():
             self._log_dict[key].append(item)
-
             if (collected_frames - self._last_log.get(key, 0)) > self._log_interval:
                 self._last_log[key] = collected_frames
                 _log = True
@@ -599,17 +633,19 @@ class ReplayBufferTrainer(TrainerHookBase):
 
     Args:
         replay_buffer (TensorDictReplayBuffer): replay buffer to be used.
-        batch_size (int): batch size when sampling data from the
-            latest collection or from the replay buffer.
-        memmap (bool, optional): if True, a memmap tensordict is created.
-            Default is False.
+        batch_size (int, optional): batch size when sampling data from the
+            latest collection or from the replay buffer. If none is provided,
+            the replay buffer batch-size will be used (preferred option for
+            unchanged batch-sizes).
+        memmap (bool, optional): if ``True``, a memmap tensordict is created.
+            Default is ``False``.
         device (device, optional): device where the samples must be placed.
-            Default is cpu.
-        flatten_tensordicts (bool, optional): if True, the tensordicts will be
+            Default is ``cpu``.
+        flatten_tensordicts (bool, optional): if ``True``, the tensordicts will be
             flattened (or equivalently masked with the valid mask obtained from
             the collector) before being passed to the replay buffer. Otherwise,
             no transform will be achieved other than padding (see :obj:`max_dims` arg below).
-            Defaults to True
+            Defaults to ``False``.
         max_dims (sequence of int, optional): if :obj:`flatten_tensordicts` is set to False,
             this will be a list of the length of the batch_size of the provided
             tensordicts that represent the maximum size of each. If provided,
@@ -628,10 +664,10 @@ class ReplayBufferTrainer(TrainerHookBase):
     def __init__(
         self,
         replay_buffer: TensorDictReplayBuffer,
-        batch_size: int,
+        batch_size: Optional[int] = None,
         memmap: bool = False,
         device: DEVICE_TYPING = "cpu",
-        flatten_tensordicts: bool = True,
+        flatten_tensordicts: bool = False,
         max_dims: Optional[Sequence[int]] = None,
     ) -> None:
         self.replay_buffer = replay_buffer
@@ -658,7 +694,6 @@ class ReplayBufferTrainer(TrainerHookBase):
                     )
                     pads += [0, pad_value]
                 batch = pad(batch, pads)
-        # reward_training = batch.get("reward").mean().item()
         batch = batch.cpu()
         if self.memmap:
             # We can already place the tensords on the device if they're memmap,
@@ -667,7 +702,7 @@ class ReplayBufferTrainer(TrainerHookBase):
         self.replay_buffer.extend(batch)
 
     def sample(self, batch: TensorDictBase) -> TensorDictBase:
-        sample = self.replay_buffer.sample(self.batch_size)
+        sample = self.replay_buffer.sample(batch_size=self.batch_size)
         return sample.to(self.device, non_blocking=True)
 
     def update_priority(self, batch: TensorDictBase) -> None:
@@ -725,11 +760,12 @@ class OptimizerHook(TrainerHookBase):
         for param_group in self.optimizer.param_groups:
             params += param_group["params"]
 
-        if clip_grad_norm:
+        if clip_grad_norm and clip_norm is not None:
             gn = nn.utils.clip_grad_norm_(params, clip_norm)
         else:
             gn = sum([p.grad.pow(2).sum() for p in params if p.grad is not None]).sqrt()
-            nn.utils.clip_grad_value_(params, clip_norm)
+            if clip_norm is not None:
+                nn.utils.clip_grad_value_(params, clip_norm)
 
         return float(gn)
 
@@ -786,34 +822,46 @@ class ClearCudaCache(TrainerHookBase):
             torch.cuda.empty_cache()
 
 
-class LogReward(TrainerHookBase):
+class LogScalar(TrainerHookBase):
     """Reward logger hook.
 
     Args:
         logname (str, optional): name of the rewards to be logged. Default is :obj:`"r_training"`.
-        log_pbar (bool, optional): if True, the reward value will be logged on
-            the progression bar. Default is :obj:`False`.
+        log_pbar (bool, optional): if ``True``, the reward value will be logged on
+            the progression bar. Default is ``False``.
+        reward_key (str or tuple, optional): the key where to find the reward
+            in the input batch. Defaults to ``("next", "reward")``
 
     Examples:
-        >>> log_reward = LogReward("reward")
+        >>> log_reward = LogScalar(("next", "reward"))
         >>> trainer.register_op("pre_steps_log", log_reward)
 
     """
 
-    def __init__(self, logname="r_training", log_pbar: bool = False):
+    def __init__(
+        self,
+        logname="r_training",
+        log_pbar: bool = False,
+        reward_key: Union[str, tuple] = None,
+    ):
         self.logname = logname
         self.log_pbar = log_pbar
+        if reward_key is None:
+            reward_key = REWARD_KEY
+        self.reward_key = reward_key
 
     def __call__(self, batch: TensorDictBase) -> Dict:
         if ("collector", "mask") in batch.keys(True):
             return {
-                self.logname: batch.get("reward")[batch.get(("collector", "mask"))]
+                self.logname: batch.get(self.reward_key)[
+                    batch.get(("collector", "mask"))
+                ]
                 .mean()
                 .item(),
                 "log_pbar": self.log_pbar,
             }
         return {
-            self.logname: batch.get("reward").mean().item(),
+            self.logname: batch.get(self.reward_key).mean().item(),
             "log_pbar": self.log_pbar,
         }
 
@@ -822,12 +870,36 @@ class LogReward(TrainerHookBase):
         trainer.register_module(name, self)
 
 
+class LogReward(LogScalar):
+    """Deprecated class. Use LogScalar instead."""
+
+    def __init__(
+        self,
+        logname="r_training",
+        log_pbar: bool = False,
+        reward_key: Union[str, tuple] = None,
+    ):
+        warnings.warn(
+            "The 'LogReward' class is deprecated and will be removed in v0.9. Please use 'LogScalar' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(logname=logname, log_pbar=log_pbar, reward_key=reward_key)
+
+
 class RewardNormalizer(TrainerHookBase):
     """Reward normalizer hook.
 
     Args:
-        decay (float, optional): exponential moving average decay parameter.
+        decay (:obj:`float`, optional): exponential moving average decay parameter.
             Default is 0.999
+        scale (:obj:`float`, optional): the scale used to multiply the reward once
+            normalized. Defaults to 1.0.
+        eps (:obj:`float`, optional): the epsilon jitter used to prevent numerical
+            underflow. Defaults to ``torch.finfo(DEFAULT_DTYPE).eps``
+            where ``DEFAULT_DTYPE=torch.get_default_dtype()``.
+        reward_key (str or tuple, optional): the key where to find the reward
+            in the input batch. Defaults to ``("next", "reward")``
 
     Examples:
         >>> reward_normalizer = RewardNormalizer()
@@ -840,19 +912,25 @@ class RewardNormalizer(TrainerHookBase):
         self,
         decay: float = 0.999,
         scale: float = 1.0,
-        eps: float = 1e-4,
+        eps: float = None,
         log_pbar: bool = False,
+        reward_key=None,
     ):
         self._normalize_has_been_called = False
         self._update_has_been_called = False
         self._reward_stats = OrderedDict()
         self._reward_stats["decay"] = decay
         self.scale = scale
+        if eps is None:
+            eps = torch.finfo(torch.get_default_dtype()).eps
         self.eps = eps
+        if reward_key is None:
+            reward_key = REWARD_KEY
+        self.reward_key = reward_key
 
     @torch.no_grad()
     def update_reward_stats(self, batch: TensorDictBase) -> None:
-        reward = batch.get("reward")
+        reward = batch.get(self.reward_key)
         if ("collector", "mask") in batch.keys(True):
             reward = reward[batch.get(("collector", "mask"))]
         if self._update_has_been_called and not self._normalize_has_been_called:
@@ -884,7 +962,7 @@ class RewardNormalizer(TrainerHookBase):
 
     def normalize_reward(self, tensordict: TensorDictBase) -> TensorDictBase:
         tensordict = tensordict.to_tensordict()  # make sure it is not a SubTensorDict
-        reward = tensordict.get("reward")
+        reward = tensordict.get(self.reward_key)
 
         if reward.device is not None:
             reward = reward - self._reward_stats["mean"].to(reward.device)
@@ -893,7 +971,7 @@ class RewardNormalizer(TrainerHookBase):
             reward = reward - self._reward_stats["mean"]
             reward = reward / self._reward_stats["std"]
 
-        tensordict.set("reward", reward * self.scale)
+        tensordict.set(self.reward_key, reward * self.scale)
         self._normalize_has_been_called = True
         return tensordict
 
@@ -937,7 +1015,7 @@ def mask_batch(batch: TensorDictBase) -> TensorDictBase:
 
 
 class BatchSubSampler(TrainerHookBase):
-    """Data subsampler for online RL algorithms.
+    """Data subsampler for online RL sota-implementations.
 
     This class subsamples a part of a whole batch of data just collected from the
     environment.
@@ -1066,11 +1144,11 @@ class BatchSubSampler(TrainerHookBase):
         trainer.register_module(name, self)
 
 
-class Recorder(TrainerHookBase):
-    """Recorder hook for Trainer.
+class LogValidationReward(TrainerHookBase):
+    """Recorder hook for :class:`~torchrl.trainers.Trainer`.
 
     Args:
-        record_interval (int): total number of optimisation steps
+        record_interval (int): total number of optimization steps
             between two calls to the recorder for testing.
         record_frames (int): number of frames to be recorded during
             testing.
@@ -1079,7 +1157,7 @@ class Recorder(TrainerHookBase):
             each iteration, otherwise the frame count can be underestimated.
             For logging, this parameter is important to normalize the reward.
             Finally, to compare different runs with different frame_skip,
-            one must normalize the frame count and rewards. Default is 1.
+            one must normalize the frame count and rewards. Defaults to ``1``.
         policy_exploration (ProbabilisticTDModule): a policy
             instance used for
 
@@ -1089,47 +1167,60 @@ class Recorder(TrainerHookBase):
 
             Given that this instance is supposed to both explore and render
             the performance of the policy, it should be possible to turn off
-            the explorative behaviour by calling the
-            `set_exploration_mode('mode')` context manager.
-        recorder (EnvBase): An environment instance to be used
+            the explorative behavior by calling the
+            `set_exploration_type(ExplorationType.DETERMINISTIC)` context manager.
+        environment (EnvBase): An environment instance to be used
             for testing.
-        exploration_mode (str, optional): exploration mode to use for the
+        exploration_type (ExplorationType, optional): exploration mode to use for the
             policy. By default, no exploration is used and the value used is
-            "mode". Set to "random" to enable exploration
-        out_key (str, optional): reward key to set to the logger. Default is
-            `"reward_evaluation"`.
+            ``ExplorationType.DETERMINISTIC``. Set to ``ExplorationType.RANDOM`` to enable exploration
+        log_keys (sequence of str or tuples or str, optional): keys to read in the tensordict
+            for logging. Defaults to ``[("next", "reward")]``.
+        out_keys (Dict[str, str], optional): a dictionary mapping the ``log_keys``
+            to their name in the logs. Defaults to ``{("next", "reward"): "r_evaluation"}``.
         suffix (str, optional): suffix of the video to be recorded.
-        log_pbar (bool, optional): if True, the reward value will be logged on
+        log_pbar (bool, optional): if ``True``, the reward value will be logged on
             the progression bar. Default is `False`.
 
     """
 
+    ENV_DEPREC = (
+        "the environment should be passed under the 'environment' key"
+        " and not the 'recorder' key."
+    )
+
     def __init__(
         self,
+        *,
         record_interval: int,
         record_frames: int,
-        frame_skip: int,
-        policy_exploration: SafeModule,
-        recorder: EnvBase,
-        exploration_mode: str = "random",
-        log_keys: Optional[List[str]] = None,
-        out_keys: Optional[Dict[str, str]] = None,
+        frame_skip: int = 1,
+        policy_exploration: TensorDictModule,
+        environment: EnvBase = None,
+        exploration_type: ExplorationType = ExplorationType.RANDOM,
+        log_keys: Optional[List[Union[str, Tuple[str]]]] = None,
+        out_keys: Optional[Dict[Union[str, Tuple[str]], str]] = None,
         suffix: Optional[str] = None,
         log_pbar: bool = False,
+        recorder: EnvBase = None,
     ) -> None:
-
+        if environment is None and recorder is not None:
+            warnings.warn(self.ENV_DEPREC)
+            environment = recorder
+        elif environment is not None and recorder is not None:
+            raise ValueError("environment and recorder conflict.")
         self.policy_exploration = policy_exploration
-        self.recorder = recorder
+        self.environment = environment
         self.record_frames = record_frames
         self.frame_skip = frame_skip
         self._count = 0
         self.record_interval = record_interval
-        self.exploration_mode = exploration_mode
+        self.exploration_type = exploration_type
         if log_keys is None:
-            log_keys = ["reward"]
+            log_keys = [("next", "reward")]
         if out_keys is None:
             out_keys = KeyDependentDefaultDict(lambda x: x)
-            out_keys["reward"] = "r_evaluation"
+            out_keys[("next", "reward")] = "r_evaluation"
         self.log_keys = log_keys
         self.out_keys = out_keys
         self.suffix = suffix
@@ -1139,51 +1230,92 @@ class Recorder(TrainerHookBase):
     def __call__(self, batch: TensorDictBase) -> Dict:
         out = None
         if self._count % self.record_interval == 0:
-            with set_exploration_mode(self.exploration_mode):
+            with set_exploration_type(self.exploration_type):
                 if isinstance(self.policy_exploration, torch.nn.Module):
                     self.policy_exploration.eval()
-                self.recorder.eval()
-                td_record = self.recorder.rollout(
+                self.environment.eval()
+                td_record = self.environment.rollout(
                     policy=self.policy_exploration,
                     max_steps=self.record_frames,
                     auto_reset=True,
                     auto_cast_to_device=True,
+                    break_when_any_done=False,
                 ).clone()
+                td_record = split_trajectories(td_record)
                 if isinstance(self.policy_exploration, torch.nn.Module):
                     self.policy_exploration.train()
-                self.recorder.train()
-                self.recorder.transform.dump(suffix=self.suffix)
+                self.environment.train()
+                self.environment.transform.dump(suffix=self.suffix)
 
                 out = {}
                 for key in self.log_keys:
                     value = td_record.get(key).float()
-                    if key == "reward":
-                        mean_value = value.mean() / self.frame_skip
-                        total_value = value.sum()
+                    if key == ("next", "reward"):
+                        mask = td_record["mask"]
+                        mean_value = value[mask].mean() / self.frame_skip
+                        total_value = value.sum(dim=td_record.ndim - 1).mean()
                         out[self.out_keys[key]] = mean_value
                         out["total_" + self.out_keys[key]] = total_value
                         continue
                     out[self.out_keys[key]] = value
                 out["log_pbar"] = self.log_pbar
         self._count += 1
-        self.recorder.close()
+        self.environment.close()
         return out
 
     def state_dict(self) -> Dict:
         return {
             "_count": self._count,
-            "recorder_state_dict": self.recorder.state_dict(),
+            "recorder_state_dict": self.environment.state_dict(),
         }
 
     def load_state_dict(self, state_dict: Dict) -> None:
         self._count = state_dict["_count"]
-        self.recorder.load_state_dict(state_dict["recorder_state_dict"])
+        self.environment.load_state_dict(state_dict["recorder_state_dict"])
 
     def register(self, trainer: Trainer, name: str = "recorder"):
         trainer.register_module(name, self)
         trainer.register_op(
             "post_steps_log",
             self,
+        )
+
+
+class Recorder(LogValidationReward):
+    """Deprecated class. Use LogValidationReward instead."""
+
+    def __init__(
+        self,
+        *,
+        record_interval: int,
+        record_frames: int,
+        frame_skip: int = 1,
+        policy_exploration: TensorDictModule,
+        environment: EnvBase = None,
+        exploration_type: ExplorationType = ExplorationType.RANDOM,
+        log_keys: Optional[List[Union[str, Tuple[str]]]] = None,
+        out_keys: Optional[Dict[Union[str, Tuple[str]], str]] = None,
+        suffix: Optional[str] = None,
+        log_pbar: bool = False,
+        recorder: EnvBase = None,
+    ) -> None:
+        warnings.warn(
+            "The 'Recorder' class is deprecated and will be removed in v0.9. Please use 'LogValidationReward' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(
+            record_interval=record_interval,
+            record_frames=record_frames,
+            frame_skip=frame_skip,
+            policy_exploration=policy_exploration,
+            environment=environment,
+            exploration_type=exploration_type,
+            log_keys=log_keys,
+            out_keys=out_keys,
+            suffix=suffix,
+            log_pbar=log_pbar,
+            recorder=recorder,
         )
 
 
@@ -1196,7 +1328,7 @@ class UpdateWeights(TrainerHookBase):
     intervals. If the devices match, this will result in a no-op.
 
     Args:
-        collector (_DataCollector): A data collector where the policy weights
+        collector (DataCollectorBase): A data collector where the policy weights
             must be synced.
         update_weights_interval (int): Interval (in terms of number of batches
             collected) where the sync must take place.
@@ -1207,7 +1339,7 @@ class UpdateWeights(TrainerHookBase):
 
     """
 
-    def __init__(self, collector: _DataCollector, update_weights_interval: int):
+    def __init__(self, collector: DataCollectorBase, update_weights_interval: int):
         self.collector = collector
         self.update_weights_interval = update_weights_interval
         self.counter = 0
@@ -1238,7 +1370,7 @@ class CountFramesLog(TrainerHookBase):
         frame_skip (int): frame skip of the environment. This argument is
             important to keep track of the total number of frames, not the
             apparent one.
-        log_pbar (bool, optional): if True, the reward value will be logged on
+        log_pbar (bool, optional): if ``True``, the reward value will be logged on
             the progression bar. Default is `False`.
 
     Examples:

@@ -8,17 +8,41 @@ from .actors import (
     ActorCriticOperator,
     ActorCriticWrapper,
     ActorValueOperator,
+    DecisionTransformerInferenceWrapper,
     DistributionalQValueActor,
+    DistributionalQValueHook,
+    DistributionalQValueModule,
+    LMHeadActorValueOperator,
+    MultiStepActorWrapper,
     ProbabilisticActor,
     QValueActor,
+    QValueHook,
+    QValueModule,
+    TanhModule,
     ValueOperator,
 )
-from .common import SafeModule
+from .common import SafeModule, VmapModule
 from .exploration import (
+    AdditiveGaussianModule,
     AdditiveGaussianWrapper,
+    EGreedyModule,
     EGreedyWrapper,
+    OrnsteinUhlenbeckProcessModule,
     OrnsteinUhlenbeckProcessWrapper,
 )
-from .probabilistic import SafeProbabilisticModule, SafeProbabilisticSequential
+from .probabilistic import (
+    SafeProbabilisticModule,
+    SafeProbabilisticTensorDictSequential,
+)
+from .rnn import (
+    GRU,
+    GRUCell,
+    GRUModule,
+    LSTM,
+    LSTMCell,
+    LSTMModule,
+    recurrent_mode,
+    set_recurrent_mode,
+)
 from .sequence import SafeSequential
 from .world_models import WorldModelWrapper
