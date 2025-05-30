@@ -7733,24 +7733,9 @@ class TestCQL(LossModuleTestBase):
 
     @pytest.mark.parametrize("delay_actor", (True,))
     @pytest.mark.parametrize("delay_qvalue", (True,))
-    @pytest.mark.parametrize(
-        "max_q_backup",
-        [
-            True,
-        ],
-    )
-    @pytest.mark.parametrize(
-        "deterministic_backup",
-        [
-            True,
-        ],
-    )
-    @pytest.mark.parametrize(
-        "with_lagrange",
-        [
-            True,
-        ],
-    )
+    @pytest.mark.parametrize("max_q_backup", [True])
+    @pytest.mark.parametrize("deterministic_backup", [True])
+    @pytest.mark.parametrize("with_lagrange", [True])
     @pytest.mark.parametrize("device", get_available_devices())
     @pytest.mark.parametrize("td_est", [None])
     def test_cql_qvalfromlist(
@@ -8798,6 +8783,7 @@ class TestPPO(LossModuleTestBase):
             value,
             loss_critic_type="l2",
             functional=functional,
+            device=device,
         )
         if composite_action_dist:
             loss_fn.set_keys(
@@ -8898,6 +8884,7 @@ class TestPPO(LossModuleTestBase):
             value,
             loss_critic_type="l2",
             functional=functional,
+            device=device,
         )
         loss_fn.set_keys(
             action=("action", "action1"),
@@ -8958,9 +8945,19 @@ class TestPPO(LossModuleTestBase):
             device=device, composite_action_dist=composite_action_dist
         )
         value = self._create_mock_value(device=device)
-        loss_fn = loss_class(actor, value, loss_critic_type="l2")
+        loss_fn = loss_class(
+            actor,
+            value,
+            loss_critic_type="l2",
+            device=device,
+        )
         sd = loss_fn.state_dict()
-        loss_fn2 = loss_class(actor, value, loss_critic_type="l2")
+        loss_fn2 = loss_class(
+            actor,
+            value,
+            loss_critic_type="l2",
+            device=device,
+        )
         loss_fn2.load_state_dict(sd)
 
     @pytest.mark.parametrize("loss_class", (PPOLoss, ClipPPOLoss, KLPENPPOLoss))
@@ -9008,6 +9005,7 @@ class TestPPO(LossModuleTestBase):
             value,
             loss_critic_type="l2",
             separate_losses=True,
+            device=device,
         )
 
         if advantage is not None:
@@ -9115,6 +9113,7 @@ class TestPPO(LossModuleTestBase):
             loss_critic_type="l2",
             separate_losses=separate_losses,
             entropy_coef=0.0,
+            device=device,
         )
 
         loss_fn2 = loss_class(
@@ -9123,6 +9122,7 @@ class TestPPO(LossModuleTestBase):
             loss_critic_type="l2",
             separate_losses=separate_losses,
             entropy_coef=0.0,
+            device=device,
         )
 
         if advantage is not None:
@@ -9217,7 +9217,12 @@ class TestPPO(LossModuleTestBase):
         else:
             raise NotImplementedError
 
-        loss_fn = loss_class(actor, value, loss_critic_type="l2")
+        loss_fn = loss_class(
+            actor,
+            value,
+            loss_critic_type="l2",
+            device=device,
+        )
 
         params = TensorDict.from_module(loss_fn, as_module=True)
 
@@ -9610,6 +9615,7 @@ class TestPPO(LossModuleTestBase):
                     value,
                     loss_critic_type="l2",
                     clip_value=clip_value,
+                    device=device,
                 )
 
         else:
@@ -9618,6 +9624,7 @@ class TestPPO(LossModuleTestBase):
                 value,
                 loss_critic_type="l2",
                 clip_value=clip_value,
+                device=device,
             )
             advantage(td)
             if composite_action_dist:
