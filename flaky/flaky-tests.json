@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-02-06T07:01:57.546050+00:00",
+  "generated_at": "2026-02-07T06:50:33.067799+00:00",
   "analysis_period": {
     "start": "2025-05-02",
-    "end": "2026-02-05",
-    "runs_analyzed": 168
+    "end": "2026-02-07",
+    "runs_analyzed": 170
   },
   "summary": {
     "total_tests": 0,
