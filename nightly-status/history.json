@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-21T06:28:06.059861+00:00",
+  "last_updated": "2026-02-21T18:27:51.323370+00:00",
   "stats": {
     "last_7_days": {
       "days": 7,
@@ -22,7 +22,7 @@
     {
       "date": "2026-02-21",
       "orchestrator_ran": true,
-      "orchestrator_status": "pending",
+      "orchestrator_status": "queued",
       "orchestrator_url": "https://github.com/mcx/rl-1/actions/runs/22251957913",
       "orchestrator_run_id": 22251957913,
       "workflows": {
