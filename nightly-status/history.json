@@ -1,24 +1,137 @@
 {
-  "last_updated": "2026-07-03T19:10:56.190353+00:00",
+  "last_updated": "2026-07-04T08:20:34.340197+00:00",
   "stats": {
     "last_7_days": {
       "days": 7,
       "runs_with_data": 7,
-      "total_workflow_runs": 30,
-      "total_success": 27,
-      "total_failure": 3,
-      "success_rate": 90.0
+      "total_workflow_runs": 42,
+      "total_success": 36,
+      "total_failure": 6,
+      "success_rate": 85.7
     },
     "last_30_days": {
-      "days": 28,
-      "runs_with_data": 23,
-      "total_workflow_runs": 199,
-      "total_success": 145,
-      "total_failure": 18,
-      "success_rate": 72.9
+      "days": 29,
+      "runs_with_data": 24,
+      "total_workflow_runs": 211,
+      "total_success": 154,
+      "total_failure": 21,
+      "success_rate": 73.0
     }
   },
   "history": [
+    {
+      "date": "2026-07-04",
+      "orchestrator_ran": true,
+      "orchestrator_status": "pending",
+      "orchestrator_url": "https://github.com/mcx/rl-1/actions/runs/28700251684",
+      "orchestrator_run_id": 28700251684,
+      "workflows": {
+        "test-linux.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116961310",
+          "display_name": "Linux Tests"
+        },
+        "test-linux-llm.yml": {
+          "status": "skipped",
+          "conclusion": "skipped",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116961171",
+          "display_name": "LLM Tests"
+        },
+        "test-linux-habitat.yml": {
+          "status": "skipped",
+          "conclusion": "skipped",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116961093",
+          "display_name": "Habitat Tests"
+        },
+        "test-linux-tutorials.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960951",
+          "display_name": "Tutorials Tests"
+        },
+        "test-linux-sota.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960972",
+          "display_name": "SOTA Tests"
+        },
+        "test-linux-libs.yml": {
+          "status": "skipped",
+          "conclusion": "skipped",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116961167",
+          "display_name": "Libs Tests"
+        },
+        "test-windows-optdepts.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960979",
+          "display_name": "Windows Tests"
+        },
+        "lint.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960965",
+          "display_name": "Lint"
+        },
+        "docs.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960967",
+          "display_name": "Documentation"
+        },
+        "benchmarks.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960956",
+          "display_name": "Benchmarks"
+        },
+        "validate-test-partitioning.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960949",
+          "display_name": "Test Partitioning"
+        },
+        "nightly_build.yml": {
+          "status": "skipped",
+          "conclusion": "skipped",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116961259",
+          "display_name": "Nightly Build"
+        },
+        "build-wheels-linux.yml": {
+          "status": "failure",
+          "conclusion": "failure",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85116960982",
+          "display_name": "Wheels (Linux)"
+        },
+        "build-wheels-m1.yml": {
+          "status": "failure",
+          "conclusion": "failure",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85117036028",
+          "display_name": "Wheels (M1)"
+        },
+        "build-wheels-windows.yml": {
+          "status": "failure",
+          "conclusion": "failure",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85117095148",
+          "display_name": "Wheels (Windows)"
+        },
+        "build-wheels-aarch64-linux.yml": {
+          "status": "success",
+          "conclusion": "success",
+          "url": "https://github.com/mcx/rl-1/actions/runs/28700251684/job/85117158129",
+          "display_name": "Wheels (Aarch64)"
+        }
+      },
+      "summary": {
+        "total": 16,
+        "success": 9,
+        "failure": 3,
+        "skipped": 4,
+        "other": 0,
+        "success_rate": 75.0
+      }
+    },
     {
       "date": "2026-07-03",
       "orchestrator_ran": true,
